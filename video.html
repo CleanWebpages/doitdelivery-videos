@@ -914,7 +914,7 @@ body {
         const xhr = new XMLHttpRequest();
         xhr.open('PUT', uploadUrl);
         xhr.setRequestHeader('Content-Type', file.type || 'video/mp4');
-        xhr.setRequestHeader('x-amz-server-side-encryption', 'aws:kms');
+        // SSE params are baked into the presigned URL — do not add them as headers
         xhr.upload.onprogress = (e) => {
           if (e.lengthComputable) setProgress(Math.round(e.loaded / e.total * 90));
         };
