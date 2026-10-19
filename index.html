@@ -204,26 +204,11 @@ body {
 
 /* Card thumbnail */
 .card-thumb {
-  aspect-ratio: 16/9;
   width: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
   overflow: hidden;
   flex-shrink: 0;
-}
-.cards .card-thumb {
-  max-height: 160px;
-}
-.card-thumb-icon {
-  font-size: 52px;
-  opacity: 0.9;
-  filter: drop-shadow(0 2px 12px rgba(0,0,0,0.5));
-  user-select: none;
-  pointer-events: none;
-}
-.walkthroughs-grid .card-thumb-icon {
-  font-size: 64px;
+  display: block;
+  background: #051F4E;
 }
 
 /* Regular card */
@@ -474,16 +459,99 @@ body {
 
   async function initApp() {
 
-  const ROLE_ICONS = {
-    'lab-client': '🧪', 'lab-company': '🏢', 'pharmacy': '💊', 'driver': '🚗', 'all': '🌐'
+  const ROLE_CONFIG = {
+    'lab-client':  { color: '#8B5CF6', label: 'Lab Client',     icon: '🧪' },
+    'lab-company': { color: '#06B6D4', label: 'Lab Company',    icon: '🏢' },
+    'pharmacy':    { color: '#F59E0B', label: 'Pharmacy Admin', icon: '💊' },
+    'driver':      { color: '#10B981', label: 'Driver App',     icon: '🚗' },
+    'all':         { color: '#4F8EF7', label: 'All Roles',      icon: '🌐' },
   };
-  const ROLE_THUMB = {
-    'lab-client':  { bg: 'linear-gradient(135deg, #3b1f72, #1a0938)', icon: '🧪' },
-    'lab-company': { bg: 'linear-gradient(135deg, #0e4a5c, #051F4E)', icon: '🏢' },
-    'pharmacy':    { bg: 'linear-gradient(135deg, #5c3a0e, #2d1a05)', icon: '💊' },
-    'driver':      { bg: 'linear-gradient(135deg, #0e4a30, #051F4E)', icon: '🚗' },
-    'all':         { bg: 'linear-gradient(135deg, #1a2f5c, #051F4E)', icon: '🌐' },
-  };
+
+  // ── Canvas thumbnail helpers (shared with video.html) ───────────
+  function roundRectPath(ctx, x, y, w, h, r) {
+    ctx.beginPath();
+    ctx.moveTo(x + r, y); ctx.lineTo(x + w - r, y);
+    ctx.arcTo(x + w, y, x + w, y + r, r); ctx.lineTo(x + w, y + h - r);
+    ctx.arcTo(x + w, y + h, x + w - r, y + h, r); ctx.lineTo(x + r, y + h);
+    ctx.arcTo(x, y + h, x, y + h - r, r); ctx.lineTo(x, y + r);
+    ctx.arcTo(x, y, x + r, y, r); ctx.closePath();
+  }
+  function wrapText(ctx, text, maxWidth) {
+    const words = text.split(' '), lines = [];
+    let current = '';
+    for (const word of words) {
+      const test = current ? current + ' ' + word : word;
+      if (ctx.measureText(test).width > maxWidth && current) { lines.push(current); current = word; }
+      else { current = test; }
+    }
+    if (current) lines.push(current);
+    return lines;
+  }
+  function drawThumbnail(canvas, video) {
+    const ctx = canvas.getContext('2d');
+    const W = 1280, H = 720;
+    canvas.width = W; canvas.height = H;
+    const primaryRole = video.roles && video.roles[0];
+    const rc = ROLE_CONFIG[primaryRole] || ROLE_CONFIG['all'];
+    const accentColor = rc.color, roleLabel = rc.label, roleIcon = rc.icon;
+    const bgGrad = ctx.createLinearGradient(0, 0, 0, H);
+    bgGrad.addColorStop(0, '#051F4E'); bgGrad.addColorStop(1, '#031440');
+    ctx.fillStyle = bgGrad; ctx.fillRect(0, 0, W, H);
+    ctx.fillStyle = 'rgba(255,255,255,0.03)';
+    for (let x = 30; x < W; x += 44) for (let y = 30; y < H; y += 44) { ctx.beginPath(); ctx.arc(x, y, 1.5, 0, Math.PI * 2); ctx.fill(); }
+    const glow = ctx.createRadialGradient(W * 0.85, H * 0.5, 0, W * 0.85, H * 0.5, W * 0.55);
+    glow.addColorStop(0, accentColor + '28'); glow.addColorStop(1, 'transparent');
+    ctx.fillStyle = glow; ctx.fillRect(0, 0, W, H);
+    ctx.fillStyle = '#2ECC71'; ctx.fillRect(0, 0, W, 5);
+    const leftGrad = ctx.createLinearGradient(0, 5, 0, H);
+    leftGrad.addColorStop(0, accentColor); leftGrad.addColorStop(0.6, accentColor + '80'); leftGrad.addColorStop(1, 'transparent');
+    ctx.fillStyle = leftGrad; ctx.fillRect(0, 5, 6, H - 5);
+    ctx.save(); ctx.globalAlpha = 0.15; ctx.font = '160px sans-serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    ctx.fillText(roleIcon, W - 180, H * 0.5 + 10); ctx.restore();
+    ctx.save(); ctx.font = '600 14px Inter, system-ui, sans-serif'; ctx.textBaseline = 'middle';
+    const bMeasure = ctx.measureText(roleLabel).width, bW = bMeasure + 28, bH = 28, bX = W - bW - 32, bY = 22;
+    roundRectPath(ctx, bX, bY, bW, bH, 14); ctx.fillStyle = accentColor + '2a'; ctx.fill();
+    roundRectPath(ctx, bX, bY, bW, bH, 14); ctx.strokeStyle = accentColor + '60'; ctx.lineWidth = 1; ctx.stroke();
+    ctx.fillStyle = accentColor; ctx.textAlign = 'center'; ctx.fillText(roleLabel, bX + bW / 2, bY + bH / 2); ctx.restore();
+    ctx.save(); ctx.font = '700 26px Poppins, sans-serif'; ctx.textBaseline = 'alphabetic'; ctx.textAlign = 'left';
+    const doitW = ctx.measureText('Doit').width;
+    ctx.fillStyle = '#ffffff'; ctx.fillText('Doit', 32, 50);
+    ctx.fillStyle = '#2ECC71'; ctx.fillText('Delivery', 32 + doitW, 50); ctx.restore();
+    const typeText = video.type === 'walkthrough' ? 'PLATFORM WALKTHROUGH' : 'FEATURE OVERVIEW';
+    ctx.save(); ctx.font = '600 15px Inter, system-ui, sans-serif'; ctx.textBaseline = 'alphabetic'; ctx.textAlign = 'left';
+    ctx.fillStyle = '#2ECC71'; ctx.fillText(typeText, 32, 342); ctx.restore();
+    ctx.fillStyle = '#2ECC71'; ctx.fillRect(32, 352, 60, 2);
+    const isWalkthrough = video.type === 'walkthrough';
+    const titleFontStr = isWalkthrough ? '800 68px Poppins, sans-serif' : '700 58px Poppins, sans-serif';
+    const lineH = isWalkthrough ? 82 : 70;
+    ctx.save(); ctx.font = titleFontStr; ctx.textBaseline = 'alphabetic'; ctx.textAlign = 'left'; ctx.fillStyle = '#ffffff';
+    const titleLines = wrapText(ctx, video.title || '', W * 0.62);
+    titleLines.forEach((line, i) => ctx.fillText(line, 32, 370 + lineH + i * lineH)); ctx.restore();
+    const titleEndY = 370 + lineH + titleLines.length * lineH;
+    ctx.save(); ctx.font = '400 20px Inter, system-ui, sans-serif'; ctx.textBaseline = 'alphabetic'; ctx.textAlign = 'left';
+    ctx.fillStyle = 'rgba(255,255,255,0.45)'; ctx.fillText('⏱ ' + (video.duration_label || ''), 32, titleEndY + 28); ctx.restore();
+    const bottomFade = ctx.createLinearGradient(0, H - 110, 0, H);
+    bottomFade.addColorStop(0, 'transparent'); bottomFade.addColorStop(1, 'rgba(3,20,64,0.75)');
+    ctx.fillStyle = bottomFade; ctx.fillRect(0, H - 110, W, 110);
+    ctx.save(); ctx.font = '400 15px Inter, system-ui, sans-serif'; ctx.textBaseline = 'alphabetic'; ctx.textAlign = 'left';
+    ctx.fillStyle = 'rgba(255,255,255,0.28)'; ctx.fillText('videos.doitdelivery.com', 32, H - 18); ctx.restore();
+    if (video.status === 'published') {
+      ctx.save(); ctx.font = '700 12px Inter, system-ui, sans-serif'; ctx.textBaseline = 'middle';
+      const pubText = '✓ PUBLISHED', pubW = ctx.measureText(pubText).width + 22, pubH = 22, pubX = W - pubW - 32, pubY = H - 36;
+      roundRectPath(ctx, pubX, pubY, pubW, pubH, 11); ctx.fillStyle = 'rgba(46,204,113,0.18)'; ctx.fill();
+      ctx.fillStyle = '#2ECC71'; ctx.textAlign = 'center'; ctx.fillText(pubText, pubX + pubW / 2, pubY + pubH / 2); ctx.restore();
+    }
+  }
+
+  async function drawAllThumbnails() {
+    await document.fonts.ready;
+    const videoMap = {};
+    catalog.sections.forEach(sec => sec.videos.forEach(v => { videoMap[v.id] = v; }));
+    document.querySelectorAll('canvas[data-vid]').forEach(canvas => {
+      const video = videoMap[canvas.dataset.vid];
+      if (video) drawThumbnail(canvas, video);
+    });
+  }
   const SECTION_ICONS = {
     'walkthroughs': '🎬', 'orders-dispatch': '📋', 'live-tracking': '📍',
     'route-builder': '🗺️', 'driver-app': '📱', 'scheduling-coverage': '📅',
@@ -568,11 +636,7 @@ body {
     updateProgress();
     buildSidebar();
     wireHandlers();
-  }
-
-  function getThumb(roles) {
-    const role = roles && roles[0];
-    return ROLE_THUMB[role] || ROLE_THUMB['all'];
+    drawAllThumbnails();
   }
 
   function buildCard(video, api, isDone) {
@@ -582,52 +646,61 @@ body {
     div.dataset.roles = video.roles.join(' ');
     div.dataset.status = video.status;
 
-    const thumb = getThumb(video.roles);
+    const thumbWrap = document.createElement('div');
+    thumbWrap.className = 'card-thumb';
+    const canvas = document.createElement('canvas');
+    canvas.style.cssText = 'width:100%;display:block;';
+    canvas.dataset.vid = video.id;
+    thumbWrap.appendChild(canvas);
+    div.appendChild(thumbWrap);
 
     const rolePills = video.roles.map(r => {
       if (r === 'all') return `<span class="pill pill-all">All</span>`;
       return `<span class="pill pill-${r}">${r === 'lab-client' ? 'Lab Client' : r === 'lab-company' ? 'Lab Co' : r.charAt(0).toUpperCase() + r.slice(1)}</span>`;
     }).join('');
 
-    div.innerHTML = `
-      <div class="card-thumb" style="background:${thumb.bg}"><span class="card-thumb-icon">${thumb.icon}</span></div>
-      <div class="card-row">
-        <div class="card-check"></div>
-        <div class="card-body">
-          <div class="card-title">${esc(video.title)}</div>
-          <div class="card-meta">${rolePills}<span class="duration">${esc(video.duration_label)}</span></div>
-        </div>
-        <span class="type-pill type-feature">Feature</span>
-      </div>`;
+    const row = document.createElement('div');
+    row.innerHTML = `<div class="card-row">
+      <div class="card-check"></div>
+      <div class="card-body">
+        <div class="card-title">${esc(video.title)}</div>
+        <div class="card-meta">${rolePills}<span class="duration">${esc(video.duration_label)}</span></div>
+      </div>
+      <span class="type-pill type-feature">Feature</span>
+    </div>`;
+    div.appendChild(row.firstElementChild);
     return div;
   }
 
   function buildWcard(video, api, isDone) {
-    const icon = video.roles[0] ? (ROLE_ICONS[video.roles[0]] || '🎬') : '🎬';
-    const iconBg = { 'lab-client':'#3b1f72','lab-company':'#0e4a5c','pharmacy':'#5c3a0e','driver':'#0e4a30','all':'#1a2f5c' }[video.roles[0]] || '#051F4E';
-    const thumb = getThumb(video.roles);
-
     const div = document.createElement('div');
     div.className = 'wcard' + (isDone ? ' done' : '') + (video.status === 'published' ? ' published' : '');
     div.dataset.vid = video.id;
     div.dataset.roles = video.roles.join(' ');
     div.dataset.status = video.status;
 
+    const thumbWrap = document.createElement('div');
+    thumbWrap.className = 'card-thumb';
+    const canvas = document.createElement('canvas');
+    canvas.style.cssText = 'width:100%;display:block;';
+    canvas.dataset.vid = video.id;
+    thumbWrap.appendChild(canvas);
+    div.appendChild(thumbWrap);
+
     const statusBadge = video.status === 'published'
       ? `<span class="status-pill status-published">✓ Published</span>`
       : `<span class="status-pill status-planned">Planned</span>`;
 
-    div.innerHTML = `
-      <div class="card-thumb" style="background:${thumb.bg}"><span class="card-thumb-icon">${thumb.icon}</span></div>
-      <div class="wcard-row">
-        <div class="wcard-check"></div>
-        <div class="wcard-icon" style="background:${iconBg}">${icon}</div>
-        <div class="wcard-body">
-          <div class="wcard-title">${esc(video.title)}</div>
-          <div class="wcard-desc">${esc(video.description)}</div>
-          <div class="wcard-badges">${statusBadge}<span class="duration">${esc(video.duration_label)}</span></div>
-        </div>
-      </div>`;
+    const row = document.createElement('div');
+    row.innerHTML = `<div class="wcard-row">
+      <div class="wcard-check"></div>
+      <div class="wcard-body">
+        <div class="wcard-title">${esc(video.title)}</div>
+        <div class="wcard-desc">${esc(video.description)}</div>
+        <div class="wcard-badges">${statusBadge}<span class="duration">${esc(video.duration_label)}</span></div>
+      </div>
+    </div>`;
+    div.appendChild(row.firstElementChild);
     return div;
   }
 
