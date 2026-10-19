@@ -997,7 +997,7 @@ body {
           setDirty(false);
           segmentList.querySelectorAll('.segment-card.dirty').forEach(c => c.classList.remove('dirty'));
           setSaveStatus('saved', 'Saved ✓');
-          // Update per-segment attribution from response without re-rendering
+          // Update per-segment attribution from response, then re-render if safe
           const returnedSegs = (j.data || j).transcript_segments;
           if (Array.isArray(returnedSegs)) {
             segments.forEach((seg, i) => {
@@ -1007,6 +1007,10 @@ body {
                 seg.edits = returnedSegs[i].edits || seg.edits;
               }
             });
+            // Only re-render if the user isn't actively typing inside a segment
+            if (!segmentList.contains(document.activeElement)) {
+              renderSegments();
+            }
           }
         } else { throw new Error(); }
       } catch { setSaveStatus('error', 'Error saving'); }
@@ -1105,13 +1109,18 @@ body {
                               + ' at ' + d.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
             } catch {}
           }
-          const arrow = hasHistory ? `<span class="seg-attr-arrow">▾</span>` : '';
-          attrDiv.innerHTML = `<span>Edited by ${esc(displayName)}${esc(dateStr)}</span>${arrow}`;
+          attrDiv.className = 'seg-attribution has-history';
+          attrDiv.innerHTML = `<span>Edited by ${esc(displayName)}${esc(dateStr)}</span><span class="seg-attr-arrow">▾</span>`;
 
           const histPanel = document.createElement('div');
-          histPanel.className = 'seg-history' + (hasHistory ? ' open' : '');
+          histPanel.className = 'seg-history open';
 
-          if (hasHistory) {
+          if (!hasHistory) {
+            const empty = document.createElement('div');
+            empty.style.cssText = 'font-size:11px;color:#94a3b8;font-style:italic;';
+            empty.textContent = 'No previous versions yet — history starts on next edit.';
+            histPanel.appendChild(empty);
+          } else {
             [...seg_data.edits].reverse().forEach(edit => {
               const entry = document.createElement('div');
               entry.className = 'seg-history-entry';
@@ -1137,13 +1146,13 @@ body {
               }
               histPanel.appendChild(entry);
             });
-
-            const arrowEl = attrDiv.querySelector('.seg-attr-arrow');
-            attrDiv.addEventListener('click', () => {
-              histPanel.classList.toggle('open');
-              if (arrowEl) arrowEl.textContent = histPanel.classList.contains('open') ? '▾' : '▸';
-            });
           }
+
+          const arrowEl = attrDiv.querySelector('.seg-attr-arrow');
+          attrDiv.addEventListener('click', () => {
+            histPanel.classList.toggle('open');
+            if (arrowEl) arrowEl.textContent = histPanel.classList.contains('open') ? '▾' : '▸';
+          });
 
           card.appendChild(attrDiv);
           card.appendChild(histPanel);
