@@ -748,6 +748,11 @@ body {
     }
   }
 
+  // ── Segments API flag ──────────────────────────────────────────
+  // Set to true once backend ships the transcript_segments jsonb column.
+  // Frontend will then send JSON instead of the text format.
+  const USE_SEGMENTS_API = false;
+
   // ── Main app ───────────────────────────────────────────────────
   async function initApp() {
     const params = new URLSearchParams(window.location.search);
@@ -896,16 +901,18 @@ body {
 
     async function saveAll() {
       if (!getToken()) { showLogin(); return; }
-      const segments = collectSegments();
-      const transcript = serializeTranscript(segments);
+      const segs = collectSegments();
       const team_notes = teamNotesEl.value;
       const done = doneCheck.checked;
+      const payload = USE_SEGMENTS_API
+        ? { transcript_segments: segs.map(s => ({ timestamp: s.timestamp, name: s.name, body: s.text })), team_notes, done }
+        : { transcript: serializeTranscript(segs), team_notes, done };
       setSaveStatus('saving', 'Saving…');
       try {
         const res = await fetch(API_BASE + '/video_catalog_items/' + encodeURIComponent(videoId), {
           method: 'PATCH',
           headers: authHeaders(),
-          body: JSON.stringify({ data: { transcript, team_notes, done } }),
+          body: JSON.stringify({ data: payload }),
         });
         if (res.status === 401) {
           token = null;
@@ -941,8 +948,14 @@ body {
     addSegBtn.textContent = '＋ Add Segment';
     transcriptBlock.appendChild(addSegBtn);
 
-    // Parse stored transcript or start with one blank segment
-    let segments = parseTranscript(apiItem.transcript || '');
+    // Prefer transcript_segments JSON if present, fall back to parsing text
+    let segments;
+    const storedSegs = apiItem.transcript_segments;
+    if (Array.isArray(storedSegs) && storedSegs.length > 0) {
+      segments = storedSegs.map(s => ({ timestamp: s.timestamp || '0:00', name: s.name || '', text: s.body || s.text || '' }));
+    } else {
+      segments = parseTranscript(apiItem.transcript || '');
+    }
     if (segments.length === 0) {
       segments = [{ timestamp: '0:00', name: '', text: '' }];
     }
