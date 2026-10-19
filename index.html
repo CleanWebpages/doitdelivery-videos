@@ -1,0 +1,661 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>DoitDelivery Video Library</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Poppins:wght@500;600;700&display=swap">
+<style>
+/* ── Design tokens — matches DoitDelivery docs theme ── */
+:root {
+  --navy:      #051F4E;
+  --navy-mid:  #0a2d6e;
+  --navy-soft: #0d3580;
+  --green:     #2ECC71;
+  --green-dim: #27ae60;
+  --sidebar-bg: #051F4E;
+  --content-bg: #f7f8fc;
+  --surface:    #ffffff;
+  --border:     #dde3f0;
+  --fg:         #0f1b34;
+  --fg2:        #334575;
+  --fg3:        #6b7fa8;
+  --accent:     #2ECC71;
+  --accent-text:#059048;
+  color-scheme: light;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body { height: 100%; }
+
+body {
+  font-family: 'Inter', system-ui, sans-serif;
+  background: var(--content-bg);
+  color: var(--fg);
+  font-size: 14px;
+  line-height: 1.6;
+  display: flex;
+  flex-direction: column;
+  min-height: 100%;
+}
+
+/* ── Top nav bar ── */
+.topbar {
+  background: var(--navy);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 0 24px;
+  height: 52px;
+  flex-shrink: 0;
+  position: sticky;
+  top: 0;
+  z-index: 200;
+  box-shadow: 0 1px 0 rgba(255,255,255,0.08);
+}
+
+.topbar-logo {
+  font-family: 'Poppins', sans-serif;
+  font-size: 16px;
+  font-weight: 700;
+  color: #fff;
+  letter-spacing: -0.01em;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.topbar-logo span { color: var(--green); }
+
+.topbar-title {
+  font-size: 13px;
+  font-weight: 500;
+  color: rgba(255,255,255,0.55);
+  margin-left: 4px;
+}
+.topbar-title::before { content: '/'; margin-right: 8px; opacity: 0.4; }
+
+.topbar-right { margin-left: auto; display: flex; align-items: center; gap: 10px; }
+.topbar-badge { font-size: 11px; font-weight: 600; letter-spacing: 0.04em; padding: 3px 10px; border-radius: 100px; background: rgba(46,204,113,0.15); color: var(--green); }
+.topbar-badge.loading { background: rgba(255,255,255,0.1); color: rgba(255,255,255,0.5); }
+.topbar-badge.error   { background: rgba(231,76,60,0.2); color: #e74c3c; }
+
+/* ── Layout ── */
+.layout { display: flex; flex: 1; min-height: 0; }
+
+/* ── Sidebar ── */
+.sidebar {
+  width: 240px;
+  flex-shrink: 0;
+  background: var(--navy);
+  color: rgba(255,255,255,0.8);
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  position: sticky;
+  top: 52px;
+  height: calc(100vh - 52px);
+}
+
+.sidebar-section { padding: 20px 16px 8px; }
+.sidebar-section-label {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: rgba(255,255,255,0.35);
+  margin-bottom: 6px;
+  padding-left: 8px;
+}
+
+.sidebar-link {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 8px;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 500;
+  color: rgba(255,255,255,0.7);
+  cursor: pointer;
+  text-decoration: none;
+  transition: background 0.15s, color 0.15s;
+  line-height: 1.3;
+}
+.sidebar-link:hover { background: rgba(255,255,255,0.08); color: #fff; }
+.sidebar-link.active { background: rgba(46,204,113,0.15); color: #fff; }
+.sidebar-link.active .sl-dot { background: var(--green); }
+.sl-dot { width: 6px; height: 6px; border-radius: 50%; background: rgba(255,255,255,0.3); flex-shrink: 0; }
+.sl-done { margin-left: auto; font-size: 10px; color: var(--green); flex-shrink: 0; }
+
+.sidebar-divider { height: 1px; background: rgba(255,255,255,0.07); margin: 8px 16px; }
+
+.sidebar-filter {
+  padding: 12px 16px;
+  border-top: 1px solid rgba(255,255,255,0.07);
+  margin-top: auto;
+}
+.sidebar-filter-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: rgba(255,255,255,0.35); margin-bottom: 8px; }
+.filter-pills { display: flex; flex-wrap: wrap; gap: 5px; }
+.filter-pill {
+  font-size: 11px; font-weight: 500; padding: 3px 8px; border-radius: 100px;
+  border: 1px solid rgba(255,255,255,0.2); color: rgba(255,255,255,0.6);
+  cursor: pointer; transition: all 0.15s; background: none;
+}
+.filter-pill:hover { border-color: var(--green); color: #fff; }
+.filter-pill.active { background: var(--green); border-color: var(--green); color: var(--navy); font-weight: 700; }
+
+/* ── Main content ── */
+.content {
+  flex: 1;
+  min-width: 0;
+  overflow-y: auto;
+  padding: 32px 32px 80px;
+}
+
+/* ── Page header ── */
+.page-header {
+  margin-bottom: 32px;
+  padding-bottom: 20px;
+  border-bottom: 2px solid var(--border);
+  display: flex;
+  align-items: flex-end;
+  gap: 24px;
+  flex-wrap: wrap;
+}
+.page-header-left { flex: 1; min-width: 200px; }
+.page-header-left h1 {
+  font-family: 'Poppins', sans-serif;
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--fg);
+  letter-spacing: -0.02em;
+  margin-bottom: 4px;
+}
+.page-header-left p { font-size: 13px; color: var(--fg3); }
+.header-stats { display: flex; gap: 20px; flex-wrap: wrap; flex-shrink: 0; }
+.hstat { text-align: center; }
+.hstat-num { font-family: 'Poppins', sans-serif; font-size: 22px; font-weight: 700; color: var(--navy); font-variant-numeric: tabular-nums; line-height: 1.1; }
+.hstat-label { font-size: 10px; text-transform: uppercase; letter-spacing: 0.07em; color: var(--fg3); }
+
+.progress-bar { width: 100%; height: 4px; background: var(--border); border-radius: 2px; overflow: hidden; margin-top: 12px; }
+.progress-fill { height: 100%; background: linear-gradient(90deg, var(--navy), var(--green)); border-radius: 2px; transition: width 0.4s ease; }
+
+/* ── Section ── */
+.section { margin-bottom: 36px; }
+.section-title {
+  font-family: 'Poppins', sans-serif;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--navy);
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.section-count { font-size: 11px; font-weight: 500; color: var(--fg3); background: var(--border); padding: 2px 8px; border-radius: 100px; }
+
+/* ── Cards ── */
+.cards { display: grid; gap: 8px; }
+.walkthroughs-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 10px; }
+
+/* Regular card */
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  overflow: hidden;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+.card:hover { border-color: #b8c5de; box-shadow: 0 2px 8px rgba(5,31,78,0.06); }
+.card.published { border-left: 3px solid var(--green); }
+.card.done { background: #f6fef8; border-color: #c3e6cb; }
+.card.done .card-title { color: var(--fg3); }
+
+.card-row { display: flex; align-items: center; gap: 10px; padding: 10px 14px; }
+.card-check {
+  width: 18px; height: 18px; border: 1.5px solid #c8d5e8; border-radius: 4px;
+  flex-shrink: 0; display: flex; align-items: center; justify-content: center;
+  cursor: pointer; transition: all 0.15s;
+}
+.card.done .card-check { background: var(--green); border-color: var(--green-dim); }
+.card.done .card-check::after {
+  content: ''; width: 10px; height: 6px;
+  border-left: 2px solid #fff; border-bottom: 2px solid #fff;
+  transform: rotate(-45deg) translate(1px, -1px);
+}
+.card-body { flex: 1; min-width: 0; }
+.card-title { font-weight: 500; font-size: 13.5px; color: var(--fg); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.card-meta { display: flex; gap: 6px; align-items: center; margin-top: 2px; flex-wrap: wrap; }
+.duration { font-size: 11px; color: var(--fg3); font-variant-numeric: tabular-nums; }
+.expand-btn {
+  background: none; border: none; color: #94a8c8; font-size: 15px; cursor: pointer;
+  padding: 3px 6px; border-radius: 4px; transition: color 0.15s, transform 0.2s; flex-shrink: 0;
+}
+.expand-btn:hover { color: var(--navy); }
+.card.open .expand-btn, .wcard.open .expand-btn { transform: rotate(180deg); }
+
+/* Walkthrough card */
+.wcard {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  overflow: hidden;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+.wcard:hover { border-color: #b8c5de; box-shadow: 0 2px 12px rgba(5,31,78,0.08); }
+.wcard.published { border-top: 3px solid var(--green); }
+.wcard.done { background: #f6fef8; border-color: #c3e6cb; }
+.wcard-row { display: flex; gap: 12px; align-items: flex-start; padding: 16px; }
+.wcard-icon { width: 40px; height: 40px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 20px; flex-shrink: 0; }
+.wcard-body { flex: 1; min-width: 0; }
+.wcard-title { font-family: 'Poppins', sans-serif; font-size: 14px; font-weight: 600; color: var(--fg); margin-bottom: 4px; line-height: 1.3; }
+.wcard.done .wcard-title { color: var(--fg3); }
+.wcard-desc { font-size: 12px; color: var(--fg3); line-height: 1.5; }
+.wcard-badges { display: flex; gap: 5px; margin-top: 8px; flex-wrap: wrap; align-items: center; }
+.wcard-check {
+  width: 20px; height: 20px; border: 1.5px solid #c8d5e8; border-radius: 5px;
+  flex-shrink: 0; display: flex; align-items: center; justify-content: center;
+  cursor: pointer; transition: all 0.15s; margin-top: 2px;
+}
+.wcard.done .wcard-check { background: var(--green); border-color: var(--green-dim); }
+.wcard.done .wcard-check::after {
+  content: ''; width: 10px; height: 6px;
+  border-left: 2px solid #fff; border-bottom: 2px solid #fff;
+  transform: rotate(-45deg) translate(1px, -1px);
+}
+.wcard .expand-btn { margin-top: 2px; }
+
+/* Pills */
+.pill { font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; padding: 2px 7px; border-radius: 100px; }
+.pill-lab-client   { background: #ede9fe; color: #5b21b6; }
+.pill-lab-company  { background: #e0f2fe; color: #0369a1; }
+.pill-pharmacy     { background: #fef3c7; color: #92400e; }
+.pill-driver       { background: #dcfce7; color: #15803d; }
+.pill-all          { background: #f1f5f9; color: #475569; }
+.status-pill { font-size: 10px; font-weight: 600; letter-spacing: 0.04em; padding: 2px 7px; border-radius: 100px; }
+.status-published { background: #dcfce7; color: #15803d; }
+.status-planned   { background: #f1f5f9; color: #64748b; }
+.type-pill { font-size: 10px; font-weight: 500; letter-spacing: 0.06em; text-transform: uppercase; padding: 2px 8px; border-radius: 100px; flex-shrink: 0; }
+.type-walkthrough { background: #eff6ff; color: #1d4ed8; }
+.type-feature     { background: #f5f3ff; color: #6d28d9; }
+
+/* Expansion panel */
+.card-panel {
+  border-top: 1px solid var(--border);
+  background: #f9fafc;
+  padding: 14px 16px 12px;
+}
+.panel-section { margin-bottom: 12px; }
+.panel-label { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.07em; color: var(--fg3); margin-bottom: 5px; display: block; }
+.panel-ta {
+  width: 100%; background: #fff; border: 1px solid var(--border); border-radius: 6px;
+  color: var(--fg); font-family: 'Inter', system-ui, sans-serif; font-size: 13px; line-height: 1.6;
+  padding: 9px 12px; resize: vertical; min-height: 80px; transition: border-color 0.15s;
+}
+.panel-ta:focus { outline: none; border-color: var(--navy-mid); box-shadow: 0 0 0 3px rgba(5,31,78,0.07); }
+.ta-transcript { min-height: 110px; }
+.panel-ta::placeholder { color: #b0bcd4; }
+.panel-footer { display: flex; justify-content: flex-end; margin-top: 4px; }
+.panel-status { font-size: 11px; color: var(--fg3); min-height: 16px; }
+.panel-status.saving { color: #d97706; }
+.panel-status.saved  { color: #15803d; }
+.panel-status.error  { color: #dc2626; }
+
+/* Loading / empty states */
+.loading-msg { color: var(--fg3); padding: 48px; text-align: center; font-size: 13px; }
+.spinner { display: inline-block; width: 20px; height: 20px; border: 2px solid #dde3f0; border-top-color: var(--navy); border-radius: 50%; animation: spin 0.7s linear infinite; vertical-align: middle; margin-right: 8px; }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+@media (max-width: 760px) {
+  .sidebar { display: none; }
+  .content { padding: 20px 16px 60px; }
+  .walkthroughs-grid { grid-template-columns: 1fr; }
+  .card-title { white-space: normal; }
+  .page-header { flex-direction: column; align-items: flex-start; gap: 12px; }
+}
+</style>
+</head>
+<body>
+
+<!-- ── Top bar ── -->
+<nav class="topbar">
+  <a class="topbar-logo" href="https://docs.doitdelivery.com">Doit<span>Delivery</span></a>
+  <span class="topbar-title">Video Library</span>
+  <div class="topbar-right">
+    <span class="topbar-badge loading" id="api-badge">Loading…</span>
+  </div>
+</nav>
+
+<div class="layout">
+
+  <!-- ── Sidebar ── -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-section">
+      <div class="sidebar-section-label">Sections</div>
+      <!-- populated by JS -->
+    </div>
+    <div class="sidebar-divider"></div>
+    <div class="sidebar-filter">
+      <div class="sidebar-filter-label">Filter by role</div>
+      <div class="filter-pills">
+        <button class="filter-pill active" data-filter="all">All</button>
+        <button class="filter-pill" data-filter="lab-client">Lab Client</button>
+        <button class="filter-pill" data-filter="lab-company">Lab Co</button>
+        <button class="filter-pill" data-filter="pharmacy">Pharmacy</button>
+        <button class="filter-pill" data-filter="driver">Driver</button>
+        <button class="filter-pill" data-filter="published">Published</button>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ── Content ── -->
+  <main class="content" id="content">
+    <div class="page-header">
+      <div class="page-header-left">
+        <h1>Video Library</h1>
+        <p>Tutorial and feature overview videos for every DoitDelivery user role.</p>
+        <div class="progress-bar"><div class="progress-fill" id="progress-fill" style="width:0%"></div></div>
+      </div>
+      <div class="header-stats">
+        <div class="hstat"><div class="hstat-num" id="done-count">0</div><div class="hstat-label">Done</div></div>
+        <div class="hstat"><div class="hstat-num" id="total-count">42</div><div class="hstat-label">Total</div></div>
+        <div class="hstat"><div class="hstat-num">~65 min</div><div class="hstat-label">Runtime</div></div>
+      </div>
+    </div>
+    <div id="catalog"><div class="loading-msg"><span class="spinner"></span> Loading catalog…</div></div>
+  </main>
+
+</div>
+
+<script>
+(async function () {
+  const API_BASE = 'https://api.doitdelivery.com/api';
+  const CATALOG_URL = 'videos.json';
+
+  const ROLE_ICONS = {
+    'lab-client': '🧪', 'lab-company': '🏢', 'pharmacy': '💊', 'driver': '🚗', 'all': '🌐'
+  };
+  const SECTION_ICONS = {
+    'walkthroughs': '🎬', 'orders-dispatch': '📋', 'live-tracking': '📍',
+    'route-builder': '🗺️', 'driver-app': '📱', 'scheduling-coverage': '📅',
+    'notifications-alerts': '🔔', 'billing-finance': '💰', 'reports-audit': '📊',
+    'client-user-mgmt': '👥'
+  };
+
+  let catalog = null;
+  let apiData = {};     // video_id -> {transcript, team_notes, done}
+  let currentFilter = 'all';
+  const saveTimers = {};
+  const focusedTas = new Set();
+
+  const apiBadge = document.getElementById('api-badge');
+  const doneCountEl = document.getElementById('done-count');
+  const progressFill = document.getElementById('progress-fill');
+  const catalogEl = document.getElementById('catalog');
+  const sidebarEl = document.getElementById('sidebar').querySelector('.sidebar-section');
+
+  // ── Load catalog JSON ──────────────────────────────────────────
+  try {
+    const res = await fetch(CATALOG_URL);
+    catalog = await res.json();
+  } catch (e) {
+    catalogEl.innerHTML = '<div class="loading-msg">Could not load videos.json. Make sure the file is in the same directory.</div>';
+    return;
+  }
+
+  // ── Load API data ──────────────────────────────────────────────
+  try {
+    const res = await fetch(API_BASE + '/video_catalog_items');
+    if (res.ok) {
+      const json = await res.json();
+      const items = json.data || json; // handle {data:[...]} or direct array
+      items.forEach(item => { apiData[item.video_id || item.id] = item; });
+      apiBadge.textContent = '● API Connected';
+      apiBadge.className = 'topbar-badge';
+    } else { throw new Error('non-ok'); }
+  } catch {
+    apiBadge.textContent = 'API Offline';
+    apiBadge.className = 'topbar-badge error';
+  }
+
+  // ── Render ─────────────────────────────────────────────────────
+  function renderCatalog() {
+    catalogEl.innerHTML = '';
+    let totalVideos = 0;
+
+    catalog.sections.forEach(section => {
+      const filtered = section.videos.filter(v => {
+        if (currentFilter === 'all') return true;
+        if (currentFilter === 'published') return v.status === 'published';
+        return v.roles.includes(currentFilter) || v.roles.includes('all');
+      });
+      if (filtered.length === 0) return;
+      totalVideos += filtered.length;
+
+      const sec = document.createElement('div');
+      sec.className = 'section';
+      sec.id = 'sec-' + section.id;
+
+      const titleBar = document.createElement('div');
+      titleBar.className = 'section-title';
+      titleBar.innerHTML = `<span>${SECTION_ICONS[section.id] || '▶'} ${section.title}</span><span class="section-count">${filtered.length} video${filtered.length !== 1 ? 's' : ''}</span>`;
+      sec.appendChild(titleBar);
+
+      const isWalkthrough = section.id === 'walkthroughs';
+      const grid = document.createElement('div');
+      grid.className = isWalkthrough ? 'walkthroughs-grid' : 'cards';
+      sec.appendChild(grid);
+
+      filtered.forEach(video => {
+        const api = apiData[video.id] || {};
+        const isDone = api.done || false;
+        grid.appendChild(isWalkthrough ? buildWcard(video, api, isDone) : buildCard(video, api, isDone));
+      });
+      catalogEl.appendChild(sec);
+    });
+
+    document.getElementById('total-count').textContent = totalVideos;
+    updateProgress();
+    buildSidebar();
+    wireHandlers();
+  }
+
+  function buildCard(video, api, isDone) {
+    const div = document.createElement('div');
+    div.className = 'card' + (isDone ? ' done' : '') + (video.status === 'published' ? ' published' : '');
+    div.dataset.vid = video.id;
+    div.dataset.roles = video.roles.join(' ');
+    div.dataset.status = video.status;
+
+    const rolePills = video.roles.map(r => {
+      if (r === 'all') return `<span class="pill pill-all">All</span>`;
+      return `<span class="pill pill-${r}">${r === 'lab-client' ? 'Lab Client' : r === 'lab-company' ? 'Lab Co' : r.charAt(0).toUpperCase() + r.slice(1)}</span>`;
+    }).join('');
+
+    div.innerHTML = `
+      <div class="card-row">
+        <div class="card-check"></div>
+        <div class="card-body">
+          <div class="card-title">${esc(video.title)}</div>
+          <div class="card-meta">${rolePills}<span class="duration">${esc(video.duration_label)}</span></div>
+        </div>
+        <span class="type-pill type-feature">Feature</span>
+        <button class="expand-btn" aria-label="Expand">▾</button>
+      </div>
+      <div class="card-panel" hidden>
+        <div class="panel-section"><label class="panel-label">Script / Transcript</label><textarea class="panel-ta ta-transcript" placeholder="Paste or write the narration script here…">${esc(api.transcript || '')}</textarea></div>
+        <div class="panel-section"><label class="panel-label">Team Notes</label><textarea class="panel-ta ta-notes" placeholder="Feedback, revision ideas, update requests…">${esc(api.team_notes || '')}</textarea></div>
+        <div class="panel-footer"><span class="panel-status"></span></div>
+      </div>`;
+    return div;
+  }
+
+  function buildWcard(video, api, isDone) {
+    const icon = video.roles[0] ? (ROLE_ICONS[video.roles[0]] || '🎬') : '🎬';
+    const iconBg = { 'lab-client':'#3b1f72','lab-company':'#0e4a5c','pharmacy':'#5c3a0e','driver':'#0e4a30','all':'#1a2f5c' }[video.roles[0]] || '#051F4E';
+
+    const div = document.createElement('div');
+    div.className = 'wcard' + (isDone ? ' done' : '') + (video.status === 'published' ? ' published' : '');
+    div.dataset.vid = video.id;
+    div.dataset.roles = video.roles.join(' ');
+    div.dataset.status = video.status;
+
+    const statusBadge = video.status === 'published'
+      ? `<span class="status-pill status-published">✓ Published</span>`
+      : `<span class="status-pill status-planned">Planned</span>`;
+
+    div.innerHTML = `
+      <div class="wcard-row">
+        <div class="wcard-check"></div>
+        <div class="wcard-icon" style="background:${iconBg}">${icon}</div>
+        <div class="wcard-body">
+          <div class="wcard-title">${esc(video.title)}</div>
+          <div class="wcard-desc">${esc(video.description)}</div>
+          <div class="wcard-badges">${statusBadge}<span class="duration">${esc(video.duration_label)}</span></div>
+        </div>
+        <button class="expand-btn" aria-label="Expand">▾</button>
+      </div>
+      <div class="card-panel" hidden>
+        <div class="panel-section"><label class="panel-label">Script / Transcript</label><textarea class="panel-ta ta-transcript" placeholder="Paste or write the narration script here…">${esc(api.transcript || '')}</textarea></div>
+        <div class="panel-section"><label class="panel-label">Team Notes</label><textarea class="panel-ta ta-notes" placeholder="Feedback, revision ideas, update requests…">${esc(api.team_notes || '')}</textarea></div>
+        <div class="panel-footer"><span class="panel-status"></span></div>
+      </div>`;
+    return div;
+  }
+
+  function buildSidebar() {
+    sidebarEl.innerHTML = '<div class="sidebar-section-label">Sections</div>';
+    catalog.sections.forEach(section => {
+      if (!document.getElementById('sec-' + section.id)) return;
+      const doneCount = section.videos.filter(v => (apiData[v.id] || {}).done).length;
+      const link = document.createElement('a');
+      link.className = 'sidebar-link';
+      link.href = '#sec-' + section.id;
+      link.innerHTML = `<span class="sl-dot"></span>${section.title}${doneCount ? `<span class="sl-done">${doneCount}/${section.videos.length}</span>` : ''}`;
+      link.addEventListener('click', e => {
+        e.preventDefault();
+        document.getElementById('sec-' + section.id)?.scrollIntoView({ behavior: 'smooth' });
+      });
+      sidebarEl.appendChild(link);
+    });
+  }
+
+  function updateProgress() {
+    const cards = document.querySelectorAll('[data-vid]');
+    const done = Array.from(cards).filter(c => c.classList.contains('done')).length;
+    doneCountEl.textContent = done;
+    progressFill.style.width = cards.length ? (done / cards.length * 100).toFixed(1) + '%' : '0%';
+  }
+
+  // ── Wire event handlers after render ───────────────────────────
+  function wireHandlers() {
+    document.querySelectorAll('[data-vid]').forEach(card => {
+      const vid = card.dataset.vid;
+      const panel = card.querySelector('.card-panel');
+      const check = card.querySelector('.card-check, .wcard-check');
+      const expandBtn = card.querySelector('.expand-btn');
+
+      if (expandBtn && panel) {
+        expandBtn.addEventListener('click', e => {
+          e.stopPropagation();
+          const open = !card.classList.contains('open');
+          card.classList.toggle('open', open);
+          panel.hidden = !open;
+        });
+      }
+
+      if (check) {
+        check.addEventListener('click', e => {
+          e.stopPropagation();
+          const isDone = !card.classList.contains('done');
+          card.classList.toggle('done', isDone);
+          updateProgress();
+          buildSidebar();
+          patchApi(vid, { done: isDone });
+        });
+      }
+
+      if (panel) {
+        panel.querySelectorAll('.panel-ta').forEach(ta => {
+          ta.addEventListener('focus', () => focusedTas.add(ta));
+          ta.addEventListener('blur', () => {
+            focusedTas.delete(ta);
+            clearTimeout(saveTimers[vid]);
+            savePanelNow(vid);
+          });
+          ta.addEventListener('input', () => {
+            clearTimeout(saveTimers[vid]);
+            saveTimers[vid] = setTimeout(() => savePanelNow(vid), 1500);
+          });
+        });
+      }
+    });
+  }
+
+  // ── API calls ──────────────────────────────────────────────────
+  async function patchApi(vid, patch) {
+    const existing = apiData[vid] || {};
+    const merged = Object.assign({}, existing, patch);
+    try {
+      const res = await fetch(API_BASE + '/video_catalog_items/' + vid, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ video_catalog_item: merged }),
+      });
+      if (res.ok) { const j = await res.json(); apiData[vid] = j.data || j; }
+    } catch {}
+  }
+
+  function setStatus(panel, cls, text) {
+    const el = panel && panel.querySelector('.panel-status');
+    if (!el) return;
+    el.className = 'panel-status' + (cls ? ' ' + cls : '');
+    el.textContent = text;
+  }
+
+  async function savePanelNow(vid) {
+    const card = document.querySelector('[data-vid="' + vid + '"]');
+    if (!card) return;
+    const panel = card.querySelector('.card-panel');
+    if (!panel) return;
+    const transcript = panel.querySelector('.ta-transcript').value;
+    const team_notes = panel.querySelector('.ta-notes').value;
+    const done = card.classList.contains('done');
+    setStatus(panel, 'saving', 'Saving…');
+    try {
+      const res = await fetch(API_BASE + '/video_catalog_items/' + vid, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ video_catalog_item: { video_id: vid, transcript, team_notes, done } }),
+      });
+      if (res.ok) {
+        const j = await res.json(); apiData[vid] = j.data || j;
+        setStatus(panel, 'saved', 'Saved ✓');
+        setTimeout(() => setStatus(panel, '', ''), 2000);
+      } else { throw new Error(); }
+    } catch { setStatus(panel, 'error', 'Error saving'); }
+  }
+
+  // ── Filters ───────────────────────────────────────────────────
+  document.querySelectorAll('.filter-pill').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.filter-pill').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      currentFilter = btn.dataset.filter;
+      renderCatalog();
+    });
+  });
+
+  function esc(str) {
+    return String(str || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+
+  renderCatalog();
+})();
+</script>
+</body>
+</html>

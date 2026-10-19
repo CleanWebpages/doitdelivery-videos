@@ -1,0 +1,569 @@
+{
+  "version": "1.0",
+  "updated": "2026-10-19",
+  "note": "status field tracks whether the video file exists and is published. The Rails video_catalog_items table stores mutable team state (transcript, team_notes, done).",
+  "sections": [
+    {
+      "id": "walkthroughs",
+      "title": "Main Dashboard Walkthroughs",
+      "description": "Full platform walkthroughs for each user role",
+      "videos": [
+        {
+          "id": "wt-lab-client",
+          "title": "Lab Client Portal",
+          "description": "Dashboard KPIs, live tracking, pickup history, orders, and billing — complete tour for clinic staff.",
+          "roles": ["lab-client"],
+          "type": "walkthrough",
+          "duration_label": "2:43",
+          "duration_sec": 163,
+          "status": "published",
+          "thumbnail_url": "",
+          "video_url": ""
+        },
+        {
+          "id": "wt-lab-company",
+          "title": "Lab Company Dashboard",
+          "description": "Client management, routes, drivers, will-call queue, alerts, and reports — for lab operations admins.",
+          "roles": ["lab-company"],
+          "type": "walkthrough",
+          "duration_label": "~3 min",
+          "duration_sec": 180,
+          "status": "planned",
+          "thumbnail_url": "",
+          "video_url": ""
+        },
+        {
+          "id": "wt-pharmacy",
+          "title": "Pharmacy Admin Dashboard",
+          "description": "Orders, route builder, live tracking, import center, billing, and users — complete dispatch workflow.",
+          "roles": ["pharmacy"],
+          "type": "walkthrough",
+          "duration_label": "~3 min",
+          "duration_sec": 180,
+          "status": "planned",
+          "thumbnail_url": "",
+          "video_url": ""
+        },
+        {
+          "id": "wt-driver-app",
+          "title": "Driver Mobile App",
+          "description": "Orders, dispatch wizard, route building, driving mode, stop verification, and stats — the full driver experience.",
+          "roles": ["driver"],
+          "type": "walkthrough",
+          "duration_label": "~3 min",
+          "duration_sec": 180,
+          "status": "planned",
+          "thumbnail_url": "",
+          "video_url": ""
+        },
+        {
+          "id": "wt-platform",
+          "title": "Complete Platform Overview",
+          "description": "How an order flows from clinic request through driver delivery to invoice — every role in one video.",
+          "roles": ["all"],
+          "type": "walkthrough",
+          "duration_label": "~5 min",
+          "duration_sec": 300,
+          "status": "planned",
+          "thumbnail_url": "",
+          "video_url": ""
+        }
+      ]
+    },
+    {
+      "id": "orders-dispatch",
+      "title": "Orders & Dispatch",
+      "description": "Creating, importing, and dispatching orders",
+      "videos": [
+        {
+          "id": "feat-order-standard",
+          "title": "Creating a Standard Order",
+          "description": "How dispatchers create standard pickup orders from the admin dashboard.",
+          "roles": ["pharmacy", "lab-company"],
+          "type": "feature",
+          "duration_label": "~30 sec",
+          "duration_sec": 30,
+          "status": "planned",
+          "thumbnail_url": "",
+          "video_url": ""
+        },
+        {
+          "id": "feat-order-stat",
+          "title": "Creating a STAT / Urgent Order",
+          "description": "Requesting and dispatching STAT orders that need immediate courier pickup.",
+          "roles": ["pharmacy", "lab-company", "lab-client"],
+          "type": "feature",
+          "duration_label": "~30 sec",
+          "duration_sec": 30,
+          "status": "planned",
+          "thumbnail_url": "",
+          "video_url": ""
+        },
+        {
+          "id": "feat-stat-dispatch",
+          "title": "STAT Dispatch (Lab Company)",
+          "description": "How lab company admins receive and immediately dispatch STAT orders to available drivers.",
+          "roles": ["lab-company"],
+          "type": "feature",
+          "duration_label": "~30 sec",
+          "duration_sec": 30,
+          "status": "planned",
+          "thumbnail_url": "",
+          "video_url": ""
+        },
+        {
+          "id": "feat-import-orders",
+          "title": "Importing Orders (Import Center)",
+          "description": "Bulk-importing orders from a CSV or external system using the Import Center.",
+          "roles": ["pharmacy"],
+          "type": "feature",
+          "duration_label": "~45 sec",
+          "duration_sec": 45,
+          "status": "planned",
+          "thumbnail_url": "",
+          "video_url": ""
+        },
+        {
+          "id": "feat-label-templates",
+          "title": "Label Templates",
+          "description": "Creating and managing custom label templates for pharmacy orders.",
+          "roles": ["pharmacy"],
+          "type": "feature",
+          "duration_label": "~30 sec",
+          "duration_sec": 30,
+          "status": "planned",
+          "thumbnail_url": "",
+          "video_url": ""
+        },
+        {
+          "id": "feat-dispatch-route",
+          "title": "Dispatching a Route (Dispatch Today)",
+          "description": "Using Dispatch Today to assign and launch a route to a driver.",
+          "roles": ["lab-company", "pharmacy"],
+          "type": "feature",
+          "duration_label": "~30 sec",
+          "duration_sec": 30,
+          "status": "planned",
+          "thumbnail_url": "",
+          "video_url": ""
+        },
+        {
+          "id": "feat-will-call",
+          "title": "Will-Call Confirmation (Client Flow)",
+          "description": "How lab clients confirm a will-call pickup through the portal.",
+          "roles": ["lab-client"],
+          "type": "feature",
+          "duration_label": "~30 sec",
+          "duration_sec": 30,
+          "status": "planned",
+          "thumbnail_url": "",
+          "video_url": ""
+        }
+      ]
+    },
+    {
+      "id": "live-tracking",
+      "title": "Live Tracking",
+      "description": "Real-time driver and order tracking",
+      "videos": [
+        {
+          "id": "feat-tracking-dispatcher",
+          "title": "Live Tracking Map (Dispatcher View)",
+          "description": "Real-time driver location map for dispatchers monitoring active routes.",
+          "roles": ["pharmacy", "lab-company", "lab-client"],
+          "type": "feature",
+          "duration_label": "~30 sec",
+          "duration_sec": 30,
+          "status": "planned",
+          "thumbnail_url": "",
+          "video_url": ""
+        },
+        {
+          "id": "feat-public-route-tracking",
+          "title": "Public Route Tracking Link",
+          "description": "Sharing a public link so recipients can track their delivery in real time.",
+          "roles": ["all"],
+          "type": "feature",
+          "duration_label": "~30 sec",
+          "duration_sec": 30,
+          "status": "planned",
+          "thumbnail_url": "",
+          "video_url": ""
+        },
+        {
+          "id": "feat-public-order-tracking",
+          "title": "Public Order Tracking Link",
+          "description": "Sharing a per-order tracking link for individual package tracking.",
+          "roles": ["all"],
+          "type": "feature",
+          "duration_label": "~30 sec",
+          "duration_sec": 30,
+          "status": "planned",
+          "thumbnail_url": "",
+          "video_url": ""
+        }
+      ]
+    },
+    {
+      "id": "route-builder",
+      "title": "Route Builder",
+      "description": "Building and optimizing delivery routes",
+      "videos": [
+        {
+          "id": "feat-route-builder-web",
+          "title": "Route Builder (Web)",
+          "description": "Building and optimizing delivery routes from the web dispatcher dashboard.",
+          "roles": ["pharmacy"],
+          "type": "feature",
+          "duration_label": "~45 sec",
+          "duration_sec": 45,
+          "status": "planned",
+          "thumbnail_url": "",
+          "video_url": ""
+        },
+        {
+          "id": "feat-route-builder-driver",
+          "title": "Route Building (Driver App)",
+          "description": "How drivers select orders and build their own route in the mobile app.",
+          "roles": ["driver"],
+          "type": "feature",
+          "duration_label": "~45 sec",
+          "duration_sec": 45,
+          "status": "planned",
+          "thumbnail_url": "",
+          "video_url": ""
+        },
+        {
+          "id": "feat-scheduled-routes",
+          "title": "Scheduled Routes",
+          "description": "Setting up and managing recurring scheduled routes in the driver app.",
+          "roles": ["driver"],
+          "type": "feature",
+          "duration_label": "~30 sec",
+          "duration_sec": 30,
+          "status": "planned",
+          "thumbnail_url": "",
+          "video_url": ""
+        }
+      ]
+    },
+    {
+      "id": "driver-app",
+      "title": "Driver App Features",
+      "description": "Mobile app features for delivery drivers",
+      "videos": [
+        {
+          "id": "feat-driving-mode",
+          "title": "Driving Mode & Turn-by-Turn Navigation",
+          "description": "The in-progress delivery experience with map, TTS navigation, and stop management.",
+          "roles": ["driver"],
+          "type": "feature",
+          "duration_label": "~45 sec",
+          "duration_sec": 45,
+          "status": "planned",
+          "thumbnail_url": "",
+          "video_url": ""
+        },
+        {
+          "id": "feat-completing-stop",
+          "title": "Completing a Stop",
+          "description": "Marking a delivery stop as complete and moving to the next stop.",
+          "roles": ["driver"],
+          "type": "feature",
+          "duration_label": "~30 sec",
+          "duration_sec": 30,
+          "status": "planned",
+          "thumbnail_url": "",
+          "video_url": ""
+        },
+        {
+          "id": "feat-pickup-verify",
+          "title": "Pickup Verification",
+          "description": "Verifying a pickup with photo, signature, or barcode scan.",
+          "roles": ["driver"],
+          "type": "feature",
+          "duration_label": "~30 sec",
+          "duration_sec": 30,
+          "status": "planned",
+          "thumbnail_url": "",
+          "video_url": ""
+        },
+        {
+          "id": "feat-delivery-verify",
+          "title": "Delivery Verification",
+          "description": "Confirming delivery completion with recipient signature or photo proof.",
+          "roles": ["driver"],
+          "type": "feature",
+          "duration_label": "~30 sec",
+          "duration_sec": 30,
+          "status": "planned",
+          "thumbnail_url": "",
+          "video_url": ""
+        },
+        {
+          "id": "feat-barcode-scan",
+          "title": "Barcode Scanning",
+          "description": "Using the in-app barcode scanner to verify packages during pickup and delivery.",
+          "roles": ["driver"],
+          "type": "feature",
+          "duration_label": "~30 sec",
+          "duration_sec": 30,
+          "status": "planned",
+          "thumbnail_url": "",
+          "video_url": ""
+        },
+        {
+          "id": "feat-driver-stats",
+          "title": "Driver Stats & Certifications",
+          "description": "Viewing personal delivery stats, earnings, and certification status.",
+          "roles": ["driver"],
+          "type": "feature",
+          "duration_label": "~30 sec",
+          "duration_sec": 30,
+          "status": "planned",
+          "thumbnail_url": "",
+          "video_url": ""
+        }
+      ]
+    },
+    {
+      "id": "scheduling-coverage",
+      "title": "Driver Scheduling & Coverage",
+      "description": "Managing driver availability and coverage gaps",
+      "videos": [
+        {
+          "id": "feat-driver-pay",
+          "title": "Driver Pay Configuration",
+          "description": "Setting up driver pay rates, per-stop pricing, and mileage compensation.",
+          "roles": ["lab-company", "pharmacy"],
+          "type": "feature",
+          "duration_label": "~30 sec",
+          "duration_sec": 30,
+          "status": "planned",
+          "thumbnail_url": "",
+          "video_url": ""
+        },
+        {
+          "id": "feat-coverage-calendar",
+          "title": "Coverage Calendar",
+          "description": "Viewing and managing driver availability and shift coverage across the week.",
+          "roles": ["lab-company", "pharmacy"],
+          "type": "feature",
+          "duration_label": "~45 sec",
+          "duration_sec": 45,
+          "status": "planned",
+          "thumbnail_url": "",
+          "video_url": ""
+        },
+        {
+          "id": "feat-coverage-gaps",
+          "title": "Finding & Filling Coverage Gaps",
+          "description": "Identifying uncovered routes and filling gaps by scheduling additional drivers.",
+          "roles": ["lab-company", "pharmacy"],
+          "type": "feature",
+          "duration_label": "~30 sec",
+          "duration_sec": 30,
+          "status": "planned",
+          "thumbnail_url": "",
+          "video_url": ""
+        }
+      ]
+    },
+    {
+      "id": "notifications-alerts",
+      "title": "Notifications & Alerts",
+      "description": "Configuring automated alerts and notification channels",
+      "videos": [
+        {
+          "id": "feat-alert-rules",
+          "title": "Setting Up Alert Rules",
+          "description": "Configuring automated alerts for late pickups, delays, and SLA breaches.",
+          "roles": ["lab-company", "pharmacy"],
+          "type": "feature",
+          "duration_label": "~45 sec",
+          "duration_sec": 45,
+          "status": "planned",
+          "thumbnail_url": "",
+          "video_url": ""
+        },
+        {
+          "id": "feat-notif-channels",
+          "title": "Notification Channels (Email / SMS / Push)",
+          "description": "Configuring which team members receive alerts and via which channel.",
+          "roles": ["lab-company", "pharmacy"],
+          "type": "feature",
+          "duration_label": "~30 sec",
+          "duration_sec": 30,
+          "status": "planned",
+          "thumbnail_url": "",
+          "video_url": ""
+        },
+        {
+          "id": "feat-notif-log",
+          "title": "Notification Log & History",
+          "description": "Reviewing the full history of sent alerts and their delivery status.",
+          "roles": ["lab-company", "pharmacy"],
+          "type": "feature",
+          "duration_label": "~30 sec",
+          "duration_sec": 30,
+          "status": "planned",
+          "thumbnail_url": "",
+          "video_url": ""
+        }
+      ]
+    },
+    {
+      "id": "billing-finance",
+      "title": "Billing & Finance",
+      "description": "Invoicing, reconciliation, and financial reporting",
+      "videos": [
+        {
+          "id": "feat-billing-dashboard",
+          "title": "Billing Dashboard Overview",
+          "description": "High-level billing summary: revenue, outstanding invoices, and payout totals.",
+          "roles": ["lab-company", "pharmacy"],
+          "type": "feature",
+          "duration_label": "~45 sec",
+          "duration_sec": 45,
+          "status": "planned",
+          "thumbnail_url": "",
+          "video_url": ""
+        },
+        {
+          "id": "feat-invoice-mgmt",
+          "title": "Invoice Management & Download",
+          "description": "Viewing, filtering, and downloading invoices from the billing portal.",
+          "roles": ["lab-company", "lab-client", "pharmacy"],
+          "type": "feature",
+          "duration_label": "~30 sec",
+          "duration_sec": 30,
+          "status": "planned",
+          "thumbnail_url": "",
+          "video_url": ""
+        },
+        {
+          "id": "feat-billing-recon",
+          "title": "Billing Reconciliation",
+          "description": "Reconciling client charges against completed deliveries for the billing period.",
+          "roles": ["lab-company", "pharmacy"],
+          "type": "feature",
+          "duration_label": "~30 sec",
+          "duration_sec": 30,
+          "status": "planned",
+          "thumbnail_url": "",
+          "video_url": ""
+        },
+        {
+          "id": "feat-route-profit",
+          "title": "Route Profitability",
+          "description": "Analyzing per-route revenue vs. driver cost to understand margin.",
+          "roles": ["lab-company", "pharmacy"],
+          "type": "feature",
+          "duration_label": "~30 sec",
+          "duration_sec": 30,
+          "status": "planned",
+          "thumbnail_url": "",
+          "video_url": ""
+        },
+        {
+          "id": "feat-internal-costs",
+          "title": "Tracking Internal Costs",
+          "description": "Recording and reviewing internal operational costs against delivery revenue.",
+          "roles": ["lab-company", "pharmacy"],
+          "type": "feature",
+          "duration_label": "~30 sec",
+          "duration_sec": 30,
+          "status": "planned",
+          "thumbnail_url": "",
+          "video_url": ""
+        }
+      ]
+    },
+    {
+      "id": "reports-audit",
+      "title": "Reports & Route Audit",
+      "description": "Audit trails, GPS review, and operational analytics",
+      "videos": [
+        {
+          "id": "feat-route-audit",
+          "title": "Route Audit Trail",
+          "description": "Reviewing the full audit log for a completed route: stops, timestamps, exceptions.",
+          "roles": ["lab-company", "pharmacy"],
+          "type": "feature",
+          "duration_label": "~45 sec",
+          "duration_sec": 45,
+          "status": "planned",
+          "thumbnail_url": "",
+          "video_url": ""
+        },
+        {
+          "id": "feat-gps-trail",
+          "title": "GPS Trail Review",
+          "description": "Replaying a driver's GPS breadcrumb trail for a completed route.",
+          "roles": ["lab-company", "pharmacy"],
+          "type": "feature",
+          "duration_label": "~30 sec",
+          "duration_sec": 30,
+          "status": "planned",
+          "thumbnail_url": "",
+          "video_url": ""
+        },
+        {
+          "id": "feat-dwell-analysis",
+          "title": "Stop Dwell & Wait-Time Analysis",
+          "description": "Analyzing how long drivers spent at each stop and identifying outliers.",
+          "roles": ["lab-company", "pharmacy"],
+          "type": "feature",
+          "duration_label": "~30 sec",
+          "duration_sec": 30,
+          "status": "planned",
+          "thumbnail_url": "",
+          "video_url": ""
+        }
+      ]
+    },
+    {
+      "id": "client-user-mgmt",
+      "title": "Client & User Management",
+      "description": "Managing client accounts and user access",
+      "videos": [
+        {
+          "id": "feat-client-mgmt",
+          "title": "Client Management (View & Edit)",
+          "description": "Viewing and editing client account details, addresses, and service settings.",
+          "roles": ["lab-company", "pharmacy"],
+          "type": "feature",
+          "duration_label": "~30 sec",
+          "duration_sec": 30,
+          "status": "planned",
+          "thumbnail_url": "",
+          "video_url": ""
+        },
+        {
+          "id": "feat-invite-client",
+          "title": "Inviting a New Client User",
+          "description": "Sending an invitation to a new client user and setting their access level.",
+          "roles": ["lab-company", "pharmacy"],
+          "type": "feature",
+          "duration_label": "~30 sec",
+          "duration_sec": 30,
+          "status": "planned",
+          "thumbnail_url": "",
+          "video_url": ""
+        },
+        {
+          "id": "feat-user-org-mgmt",
+          "title": "User & Organization Management",
+          "description": "Managing users, roles, and organization settings in the pharmacy admin panel.",
+          "roles": ["pharmacy"],
+          "type": "feature",
+          "duration_label": "~30 sec",
+          "duration_sec": 30,
+          "status": "planned",
+          "thumbnail_url": "",
+          "video_url": ""
+        }
+      ]
+    }
+  ]
+}
