@@ -1,0 +1,201 @@
+<title>Transcript Seeder</title>
+<style>
+  :root { --navy: #051F4E; --green: #2ecc71; --bg: #f5f8fc; --fg: #16243b; --border: #e6edf5; --surface: #fff; --muted: #5b6b82; }
+  @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --bg: #0d1829; --fg: #e8edf5; --surface: #131f35; --border: #1e2f4a; --muted: #7a8fa8; color-scheme: dark; } }
+  :root[data-theme="dark"] { --bg: #0d1829; --fg: #e8edf5; --surface: #131f35; --border: #1e2f4a; --muted: #7a8fa8; color-scheme: dark; }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: system-ui, sans-serif; background: var(--bg); color: var(--fg); min-height: 100%; padding: 0; }
+  nav { background: var(--navy); color: #fff; display: flex; align-items: center; gap: 12px; padding: 0 24px; height: 52px; }
+  nav img { height: 22px; }
+  nav span { font-size: 13px; color: rgba(255,255,255,0.5); }
+  .container { max-width: 720px; margin: 0 auto; padding: 32px 16px; }
+  h1 { font-size: 22px; font-weight: 700; margin-bottom: 6px; }
+  .subtitle { color: var(--muted); font-size: 14px; margin-bottom: 28px; }
+  .card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 20px; margin-bottom: 16px; }
+  .login-row { display: flex; gap: 10px; flex-wrap: wrap; }
+  input { flex: 1; min-width: 180px; padding: 9px 12px; border: 1px solid var(--border); border-radius: 8px; font-size: 14px; background: var(--bg); color: var(--fg); }
+  input:focus { outline: none; border-color: var(--green); }
+  button { padding: 9px 20px; border: none; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; transition: opacity 0.15s; }
+  button:disabled { opacity: 0.4; cursor: default; }
+  .btn-primary { background: var(--green); color: #fff; }
+  .btn-secondary { background: rgba(46,204,113,0.12); color: var(--green); border: 1px solid rgba(46,204,113,0.3); }
+  #login-err { color: #e74c3c; font-size: 13px; margin-top: 8px; }
+  .seed-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
+  .seed-header h2 { font-size: 16px; font-weight: 600; }
+  #overall { font-size: 13px; color: var(--muted); }
+  .progress-bar { height: 6px; background: var(--border); border-radius: 3px; overflow: hidden; margin-bottom: 20px; }
+  .progress-fill { height: 100%; width: 0%; background: var(--green); border-radius: 3px; transition: width 0.2s; }
+  #log { display: flex; flex-direction: column; gap: 6px; max-height: 420px; overflow-y: auto; }
+  .log-row { display: flex; align-items: baseline; gap: 10px; font-size: 13px; padding: 6px 0; border-bottom: 1px solid var(--border); }
+  .log-row:last-child { border-bottom: none; }
+  .log-id { font-family: monospace; font-size: 12px; color: var(--muted); min-width: 180px; flex-shrink: 0; }
+  .log-status { flex: 1; }
+  .ok   { color: var(--green); }
+  .skip { color: var(--muted); }
+  .err  { color: #e74c3c; }
+  .pending { color: var(--muted); }
+  .done-banner { background: rgba(46,204,113,0.12); border: 1px solid rgba(46,204,113,0.25); border-radius: 8px; padding: 14px 16px; text-align: center; font-weight: 600; color: var(--green); margin-top: 16px; display: none; }
+  #auth-section { display: block; }
+  #seed-section { display: none; }
+</style>
+
+<nav>
+  <img src="https://cdn.doitdelivery.com/logo-dark.png" alt="DoitDelivery">
+  <span>/ Transcript Seeder</span>
+</nav>
+
+<div class="container">
+  <h1>Transcript Seeder</h1>
+  <p class="subtitle">Seeds all 41 video transcript_segments into the API in one pass. Log in with your DoitDelivery team credentials to begin.</p>
+
+  <div class="card" id="auth-section">
+    <div class="login-row">
+      <input type="email" id="email" placeholder="Email" autocomplete="username">
+      <input type="password" id="password" placeholder="Password" autocomplete="current-password">
+      <button class="btn-primary" id="login-btn" onclick="doLogin()">Log in</button>
+    </div>
+    <div id="login-err"></div>
+  </div>
+
+  <div class="card" id="seed-section">
+    <div class="seed-header">
+      <h2>Ready to seed</h2>
+      <span id="overall"></span>
+    </div>
+    <div class="progress-bar"><div class="progress-fill" id="progress-fill"></div></div>
+    <div style="display:flex;gap:10px;margin-bottom:20px;">
+      <button class="btn-primary" id="seed-btn" onclick="runSeed()">Seed All Transcripts</button>
+      <button class="btn-secondary" onclick="doLogout()">Log out</button>
+    </div>
+    <div id="log"></div>
+    <div class="done-banner" id="done-banner">All done! 🎉  All transcripts seeded successfully.</div>
+  </div>
+</div>
+
+<script>
+(async function () {
+  const API = 'https://api.doitdelivery.com/api';
+  let token = null;
+  try { token = localStorage.getItem('doit_video_token'); } catch {}
+
+  if (token) showSeedUI();
+
+  async function doLogin() {
+    const email    = document.getElementById('email').value.trim();
+    const password = document.getElementById('password').value;
+    const errEl    = document.getElementById('login-err');
+    const btn      = document.getElementById('login-btn');
+    errEl.textContent = '';
+    if (!email || !password) { errEl.textContent = 'Enter email and password.'; return; }
+    btn.disabled = true; btn.textContent = 'Logging in…';
+    try {
+      const res = await fetch(API + '/access_tokens', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ data: { email, password, device_name: 'seed-tool' } }),
+      });
+      const j = await res.json();
+      if (!res.ok) throw new Error((j.errors || []).join(', ') || 'Login failed');
+      token = (j.data || j).access_token || (j.data || j).token;
+      try { localStorage.setItem('doit_video_token', token); } catch {}
+      showSeedUI();
+    } catch (e) {
+      errEl.textContent = e.message;
+    }
+    btn.disabled = false; btn.textContent = 'Log in';
+  }
+
+  function doLogout() {
+    token = null;
+    try { localStorage.removeItem('doit_video_token'); } catch {}
+    document.getElementById('auth-section').style.display = 'block';
+    document.getElementById('seed-section').style.display = 'none';
+  }
+
+  function showSeedUI() {
+    document.getElementById('auth-section').style.display = 'none';
+    document.getElementById('seed-section').style.display = 'block';
+    document.getElementById('overall').textContent = '41 videos';
+  }
+
+  async function runSeed() {
+    const btn = document.getElementById('seed-btn');
+    btn.disabled = true;
+    btn.textContent = 'Seeding…';
+    document.getElementById('done-banner').style.display = 'none';
+
+    let data;
+    try {
+      const r = await fetch('seed-transcripts.json?v=' + Date.now());
+      data = await r.json();
+    } catch (e) {
+      alert('Could not load seed-transcripts.json: ' + e.message);
+      btn.disabled = false; btn.textContent = 'Seed All Transcripts';
+      return;
+    }
+
+    const videos = data.videos;
+    const logEl  = document.getElementById('log');
+    const fillEl = document.getElementById('progress-fill');
+    const overEl = document.getElementById('overall');
+    logEl.innerHTML = '';
+
+    // Pre-render all rows as pending
+    videos.forEach(v => {
+      const row = document.createElement('div');
+      row.className = 'log-row';
+      row.id = 'row-' + v.id;
+      row.innerHTML = `<span class="log-id">${v.id}</span><span class="log-status pending">Waiting…</span>`;
+      logEl.appendChild(row);
+    });
+
+    let done = 0, ok = 0, errs = 0;
+
+    for (const v of videos) {
+      const row   = document.getElementById('row-' + v.id);
+      const segCount = v.transcript_segments.length;
+      row.querySelector('.log-status').textContent = 'Saving…';
+      row.querySelector('.log-status').className   = 'log-status pending';
+
+      try {
+        const res = await fetch(API + '/video_catalog_items/' + encodeURIComponent(v.id), {
+          method: 'PATCH',
+          headers: { 'Authorization': 'Bearer ' + token, 'Content-Type': 'application/json' },
+          body: JSON.stringify({ data: { transcript_segments: v.transcript_segments } }),
+        });
+        if (res.status === 401) {
+          row.querySelector('.log-status').textContent = 'Auth error — log in again';
+          row.querySelector('.log-status').className   = 'log-status err';
+          errs++;
+        } else if (res.ok) {
+          row.querySelector('.log-status').textContent = `✓  ${segCount} segments saved`;
+          row.querySelector('.log-status').className   = 'log-status ok';
+          ok++;
+        } else {
+          const j = await res.json().catch(() => ({}));
+          row.querySelector('.log-status').textContent = 'Error: ' + (j.errors || [res.status]).join(', ');
+          row.querySelector('.log-status').className   = 'log-status err';
+          errs++;
+        }
+      } catch (e) {
+        row.querySelector('.log-status').textContent = 'Network error: ' + e.message;
+        row.querySelector('.log-status').className   = 'log-status err';
+        errs++;
+      }
+
+      done++;
+      fillEl.style.width = Math.round(done / videos.length * 100) + '%';
+      overEl.textContent = `${done} / ${videos.length} — ${ok} ok, ${errs} errors`;
+      row.scrollIntoView({ block: 'nearest' });
+    }
+
+    btn.textContent = 'Seed All Transcripts';
+    btn.disabled    = false;
+    if (errs === 0) document.getElementById('done-banner').style.display = 'block';
+  }
+
+  window.doLogin   = doLogin;
+  window.doLogout  = doLogout;
+  window.runSeed   = runSeed;
+})();
+</script>

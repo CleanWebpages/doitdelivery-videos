@@ -1,0 +1,353 @@
+{
+  "videos": [
+    {
+      "id": "wt-lab-company",
+      "transcript_segments": [
+        { "timestamp": "0:00", "name": "Opening", "body": "Welcome to the DoitDelivery Lab Company Dashboard. This walkthrough covers the full operations view for lab administrators — client management, route planning, driver oversight, the will-call queue, and reporting. Everything your dispatch team needs in one place." },
+        { "timestamp": "0:18", "name": "Client Management", "body": "The Clients tab is your central directory of every clinic and facility your lab serves. Each client card shows their current order status, assigned routes, and contact information. Click any client to view their full order history, configure their pickup schedule, and set account-level preferences like STAT notifications and billing rates." },
+        { "timestamp": "0:45", "name": "Routes & Dispatch", "body": "The Routes panel shows today's active and scheduled routes. Each route card displays the assigned driver, number of stops, estimated completion time, and live status. Use Dispatch Today to push a route to a driver instantly. The map overlay shows all active drivers in real time so you can see coverage at a glance." },
+        { "timestamp": "1:15", "name": "Will-Call Queue", "body": "The Will-Call tab manages specimens that need client confirmation before pickup. When a lab flags a sample as will-call, it appears here with a timer. The system automatically notifies the client contact. Once they confirm through their portal, the order moves to the active queue and a driver can be dispatched." },
+        { "timestamp": "1:45", "name": "Driver Management", "body": "The Drivers tab shows availability, current assignment, and performance metrics for every driver on your roster. You can see who is active on a route, who is available, and who has upcoming scheduled shifts. From here you can message a driver, reassign a route, or review their recent delivery history." },
+        { "timestamp": "2:10", "name": "Alerts & Notifications", "body": "The Alerts panel surfaces real-time exceptions: late pickups, missed stops, and SLA breaches. Each alert links directly to the affected order so you can act immediately. Configure your alert rules in Settings to set the thresholds and channels — email, SMS, or push — that matter to your team." },
+        { "timestamp": "2:35", "name": "Reports & Billing", "body": "The Reports tab gives you a full operational picture: daily delivery volumes, on-time rates, stop dwell times, and driver performance. The Billing section lets you generate and download client invoices, review the reconciliation ledger, and track route profitability. Export any report to CSV for your own analysis." },
+        { "timestamp": "2:55", "name": "Closing", "body": "That's the DoitDelivery Lab Company Dashboard. One place to manage your clients, dispatch your drivers, and keep every specimen on schedule. Reach out to your DoitDelivery account manager if you need help getting your team set up." }
+      ]
+    },
+    {
+      "id": "wt-pharmacy",
+      "transcript_segments": [
+        { "timestamp": "0:00", "name": "Opening", "body": "Welcome to the DoitDelivery Pharmacy Admin Dashboard. This walkthrough covers the complete dispatch workflow — creating and importing orders, building routes, tracking deliveries live, and managing your team and billing. Let's take a full tour." },
+        { "timestamp": "0:18", "name": "Orders Panel", "body": "The Orders tab is your primary workspace. New orders appear here from manual entry, the import center, or API integrations. Each row shows the recipient, address, priority level, and current status. Use the filters to focus on today's pending orders, STAT items, or any delivery window." },
+        { "timestamp": "0:42", "name": "Creating an Order", "body": "To create a new delivery, click New Order. Enter the recipient name, address, phone, and any special handling notes. For controlled substances or temperature-sensitive deliveries, use the special instructions field and set the appropriate verification requirement — signature, photo, or ID check. Set the delivery window and priority, then submit." },
+        { "timestamp": "1:08", "name": "Import Center", "body": "For high-volume days, use the Import Center to bulk-load orders from a CSV file. Download the template, fill in your order data, and upload. The system validates each row and flags any errors before importing. You can also connect directly to your pharmacy management system via the API for fully automated order creation." },
+        { "timestamp": "1:35", "name": "Route Builder", "body": "Once your orders are loaded, open the Route Builder. Select the orders you want in today's route, choose your driver, and click Optimize. DoitDelivery clusters stops intelligently and plots the most efficient sequence using live traffic data. Review the map, adjust stop order if needed, then dispatch the route to the driver's phone." },
+        { "timestamp": "2:00", "name": "Live Tracking", "body": "Once a route is dispatched, the Tracking tab shows the driver's live location, current stop, and estimated arrival times for each delivery. Share the public tracking link with your patients so they know when to expect their delivery. Any exceptions — missed stops or delays — surface as alerts in real time." },
+        { "timestamp": "2:25", "name": "Billing & Users", "body": "The Billing tab itemizes every completed delivery for invoicing and export. The Users tab manages your team's access — invite dispatchers, set role permissions, and deactivate accounts when staff changes. Organization settings let you configure your business details, notification preferences, and integration keys." },
+        { "timestamp": "2:50", "name": "Closing", "body": "That's the DoitDelivery Pharmacy Admin Dashboard. From order creation to delivery confirmation, every step of the workflow in one place. Contact support if you need help with your setup or have questions about any feature." }
+      ]
+    },
+    {
+      "id": "wt-driver-app",
+      "transcript_segments": [
+        { "timestamp": "0:00", "name": "Opening", "body": "Welcome to the DoitDelivery Driver App. This walkthrough covers the complete driver experience — accepting orders, building your route, navigating in driving mode, verifying pickups and deliveries, and reviewing your stats. Available on iOS and Android." },
+        { "timestamp": "0:18", "name": "Home Screen & Orders", "body": "After logging in, the Home screen shows your active route status and any pending order assignments. Tap the Orders tab to see all orders available in your queue. Each order card shows the pickup address, delivery address, order type, and priority level. STAT orders are highlighted so you can prioritize immediately." },
+        { "timestamp": "0:40", "name": "Route Building", "body": "Tap the Route Builder to plan your delivery run. Select the orders you want to include, then tap Build Route. The app clusters your stops and plots the optimal sequence. You can review the map, adjust the order of stops manually if needed, then tap Start Route to go into driving mode." },
+        { "timestamp": "1:05", "name": "Driving Mode & Navigation", "body": "Driving Mode shows your full route on a map with turn-by-turn voice navigation. Each stop is displayed with the address, recipient name, and any special instructions. The app automatically detects when you're within 100 meters of a stop and announces your arrival. Tap the stop card for full delivery details." },
+        { "timestamp": "1:30", "name": "Pickup Verification", "body": "When you arrive at a pickup location, tap Verify Pickup. You can take a photo of the packages, scan the barcode on the label, or capture a signature from the clinic staff. All verification is timestamped and GPS-stamped and synced to the portal in real time so your dispatcher can see proof of pickup instantly." },
+        { "timestamp": "1:55", "name": "Delivery Verification", "body": "At each delivery stop, tap Complete Stop to open the verification screen. Capture the recipient's signature on-screen, take a delivery photo, or both. Enter the recipient's name if required. Once confirmed, the stop is marked complete and the next stop navigation begins automatically." },
+        { "timestamp": "2:20", "name": "Stats & Certifications", "body": "The Stats tab shows your personal performance metrics: deliveries completed, on-time rate, average stop time, and earnings. The Certifications section tracks your compliance training and document submissions. Keeping your certifications current ensures you stay eligible for all route types." },
+        { "timestamp": "2:45", "name": "Closing", "body": "That's the DoitDelivery Driver App. Built to keep you moving efficiently from your first pickup to your last delivery. Download it from the App Store or Google Play and log in with the credentials your dispatcher provides." }
+      ]
+    },
+    {
+      "id": "wt-platform",
+      "transcript_segments": [
+        { "timestamp": "0:00", "name": "Opening", "body": "Welcome to DoitDelivery. This overview walks through how the platform connects clinics, labs, dispatchers, and drivers into one coordinated delivery operation — following a single specimen order from request to delivery confirmation." },
+        { "timestamp": "0:22", "name": "The Four Roles", "body": "DoitDelivery serves four roles. Lab clients — clinics and facilities that request pickups. Lab companies — the labs and logistics operations that manage routes and drivers. Pharmacy admins — dispatchers who create orders and manage the delivery workflow. And drivers — the couriers delivering on the ground. Each role has its own view, but every action is visible across the chain in real time." },
+        { "timestamp": "0:52", "name": "Step 1 — Order Creation", "body": "It starts when a lab client submits a pickup request from their portal, or when a pharmacy dispatcher creates an order manually. The dispatcher enters the recipient, address, delivery window, and priority. STAT orders trigger an immediate alert to the dispatch team. Bulk orders can be imported from CSV or via API integration with the pharmacy management system." },
+        { "timestamp": "1:25", "name": "Step 2 — Route Building & Dispatch", "body": "The dispatcher opens the Route Builder, selects today's orders, and clicks Optimize. The platform plots the most efficient stop sequence using live traffic data. The dispatcher reviews the route, assigns it to an available driver, and hits Dispatch. The route appears on the driver's phone instantly." },
+        { "timestamp": "1:55", "name": "Step 3 — Driver Pickup", "body": "The driver opens the app, reviews their route, and taps Start. Driving Mode guides them turn-by-turn to the first stop. At pickup, they verify the order — photo, barcode scan, or staff signature — and the timestamp and location are logged. The lab client's portal shows pickup confirmed in real time." },
+        { "timestamp": "2:25", "name": "Step 4 — Live Tracking", "body": "While the driver is on route, dispatchers see their live location on the tracking map. Lab clients can follow the delivery via a shared public tracking link — no login required. Any exceptions, like a delayed stop or a missed delivery, surface as alerts and the dispatcher can intervene immediately." },
+        { "timestamp": "2:55", "name": "Step 5 — Delivery & Verification", "body": "At the delivery stop, the driver captures the recipient's signature or a delivery photo. The order is marked delivered, timestamped, and geo-stamped. The recipient gets a delivery confirmation. The full proof-of-delivery record is available in the portal within seconds of the driver tapping Complete." },
+        { "timestamp": "3:25", "name": "Step 6 — Reporting & Billing", "body": "After the route is complete, the full audit trail is available: every stop time, GPS breadcrumb, and verification photo. The billing module automatically generates the invoice for the completed route, itemized by stop. Lab companies can reconcile driver pay against route earnings, and everything exports to CSV or PDF." },
+        { "timestamp": "3:55", "name": "The Full Picture", "body": "From a single STAT order to hundreds of daily routes across multiple clients, DoitDelivery scales with your operation. The platform gives everyone — clinic staff, lab managers, dispatchers, and drivers — the visibility and tools they need to keep every specimen on schedule." },
+        { "timestamp": "4:25", "name": "Closing", "body": "That's DoitDelivery. Specimen logistics built for the speed and reliability that labs and the clinics they serve demand. Visit doitdelivery.com or contact your account manager to get your team started." }
+      ]
+    },
+    {
+      "id": "feat-order-standard",
+      "transcript_segments": [
+        { "timestamp": "0:00", "name": "Overview", "body": "Creating a standard delivery order in DoitDelivery takes under a minute. From the Orders tab, click New Order to open the order form." },
+        { "timestamp": "0:08", "name": "Filling Out the Order", "body": "Enter the recipient name, delivery address, phone number, and any special handling instructions. Set the delivery window — today, tomorrow, or a specific time range — and choose the priority level. Standard orders are queued for the next available route. Add any internal notes your driver or dispatcher should see, then click Submit." },
+        { "timestamp": "0:22", "name": "Confirmation", "body": "The order appears in your Orders list immediately with a Pending status. It's ready to be added to a route in the Route Builder. You'll receive a notification when a driver is assigned and again when the delivery is confirmed." }
+      ]
+    },
+    {
+      "id": "feat-order-stat",
+      "transcript_segments": [
+        { "timestamp": "0:00", "name": "Overview", "body": "STAT orders flag a delivery as urgent and trigger an immediate alert to your dispatch team. Use them for time-sensitive specimens that can't wait for the next scheduled route." },
+        { "timestamp": "0:08", "name": "Creating a STAT Order", "body": "Create the order the same way as a standard order — recipient, address, and handling notes — but toggle the Priority switch to STAT before submitting. The STAT flag highlights the order in red in the Orders list and sends an instant push notification and email to all dispatchers on duty." },
+        { "timestamp": "0:22", "name": "Dispatch Alert", "body": "Dispatchers see the STAT order at the top of their queue and can assign it to the nearest available driver with one tap. The driver receives a STAT alert on their phone. The ordering clinic's portal also shows the order as STAT so their staff knows it's been prioritized." }
+      ]
+    },
+    {
+      "id": "feat-stat-dispatch",
+      "transcript_segments": [
+        { "timestamp": "0:00", "name": "Overview", "body": "When a STAT order comes in, lab company dispatchers need to act fast. DoitDelivery surfaces STAT orders immediately and makes assigning a driver a single action." },
+        { "timestamp": "0:08", "name": "Receiving & Assigning", "body": "STAT orders appear at the top of your dispatch queue highlighted in red. The alert panel also shows a notification with the order details and originating clinic. Open the order, review the pickup and delivery addresses, then tap Assign Driver. You'll see a list of available drivers sorted by proximity to the pickup location — tap the nearest driver and confirm." },
+        { "timestamp": "0:22", "name": "Confirmation & Tracking", "body": "The driver receives a STAT push notification on their phone. You can track their progress to the pickup location in real time on the dispatch map. The ordering clinic's portal updates to show the driver has been assigned and is en route." }
+      ]
+    },
+    {
+      "id": "feat-import-orders",
+      "transcript_segments": [
+        { "timestamp": "0:00", "name": "Overview", "body": "The Import Center lets you load dozens or hundreds of orders at once from a spreadsheet — ideal for pharmacies processing a morning batch or labs with recurring client pickups." },
+        { "timestamp": "0:10", "name": "Preparing Your File", "body": "Go to Orders and click Import. Download the CSV template — it includes columns for recipient name, address, phone, delivery window, priority, and handling notes. Fill in your data, one row per order. The template includes a sample row and column descriptions to guide you." },
+        { "timestamp": "0:25", "name": "Uploading & Validation", "body": "Drag your completed CSV into the upload area or click Browse to select it. The system validates every row immediately and flags any errors — missing required fields, unrecognized addresses, or invalid values — with a red indicator and a description of the issue. Fix the errors in the file and re-upload, or correct them inline in the preview." },
+        { "timestamp": "0:38", "name": "Completing the Import", "body": "Once the file passes validation, click Import All to load the orders. They appear in your Orders list instantly, ready to be added to today's routes. For recurring imports on the same schedule, use the API integration to automate the process entirely." }
+      ]
+    },
+    {
+      "id": "feat-label-templates",
+      "transcript_segments": [
+        { "timestamp": "0:00", "name": "Overview", "body": "Label templates let you pre-configure the format and content of delivery labels so your drivers always print the right label for each order type — no manual setup at pickup." },
+        { "timestamp": "0:08", "name": "Creating a Template", "body": "Go to Settings and open Label Templates. Click New Template and choose your label size — standard 4x6 or a custom dimension. Use the drag-and-drop editor to place fields: recipient name, address, barcode, order ID, handling icons, and custom text. Preview the result on a sample order before saving." },
+        { "timestamp": "0:22", "name": "Assigning Templates to Order Types", "body": "Once saved, assign the template to one or more order types in the template settings. When a driver prints a label for a matching order, the correct template is applied automatically. You can maintain separate templates for standard, STAT, controlled substance, and cold-chain orders." }
+      ]
+    },
+    {
+      "id": "feat-dispatch-route",
+      "transcript_segments": [
+        { "timestamp": "0:00", "name": "Overview", "body": "Dispatch Today is the fastest way to get a built route onto a driver's phone. Once a route exists, dispatching it is a single action." },
+        { "timestamp": "0:08", "name": "Dispatching the Route", "body": "Open the Routes tab and find the route you want to dispatch — either one you just built in the Route Builder or a pre-scheduled route. Click Dispatch and select the driver from your available roster. The system shows each driver's current location and status so you can make the best assignment. Confirm the dispatch and the route appears on the driver's app immediately." },
+        { "timestamp": "0:22", "name": "Driver Notification", "body": "The driver receives a push notification with the route summary — number of stops, first pickup address, and estimated completion time. They can review the full stop list and tap Start Route when ready. From that point, their location and progress are visible on your dispatch map in real time." }
+      ]
+    },
+    {
+      "id": "feat-will-call",
+      "transcript_segments": [
+        { "timestamp": "0:00", "name": "Overview", "body": "Will-call orders require confirmation from the clinic before the driver is dispatched. DoitDelivery automates the notification and tracks the confirmation status so nothing falls through the cracks." },
+        { "timestamp": "0:08", "name": "Confirming a Will-Call", "body": "When a will-call order is placed, the lab client's portal displays a confirmation prompt with the order details — specimen type, number of samples, and requested pickup window. Click Confirm Pickup to approve, or Reschedule to request a different time. The confirmation is logged with a timestamp and immediately visible to your lab company dispatcher." },
+        { "timestamp": "0:22", "name": "What Happens Next", "body": "Once confirmed, the order moves from the Will-Call queue into the active dispatch queue. The lab company dispatcher is notified and can assign a driver immediately. If a confirmation isn't received within the alerting window, the dispatcher receives an escalation notification." }
+      ]
+    },
+    {
+      "id": "feat-tracking-dispatcher",
+      "transcript_segments": [
+        { "timestamp": "0:00", "name": "Overview", "body": "The Live Tracking Map gives dispatchers a real-time view of every driver on active routes — their current position, assigned stops, and estimated progress — all on one map." },
+        { "timestamp": "0:08", "name": "Reading the Map", "body": "Each driver appears as a labeled pin on the map. Tap a pin to see their name, current route, last known location timestamp, and the next stop on their list. Active routes are shown as colored lines. Completed stops are marked with a check, upcoming stops with a circle. The sidebar lists all active drivers with their on-time status at a glance." },
+        { "timestamp": "0:22", "name": "Acting on Exceptions", "body": "If a driver is running behind or an exception alert fires, you can tap their pin and use the action menu to send them a message, reassign a stop to another driver, or contact the recipient directly. All actions are logged in the route audit trail." }
+      ]
+    },
+    {
+      "id": "feat-public-route-tracking",
+      "transcript_segments": [
+        { "timestamp": "0:00", "name": "Overview", "body": "A public route tracking link lets anyone — patients, clinic staff, or facility managers — follow a driver's live progress without needing a DoitDelivery account." },
+        { "timestamp": "0:08", "name": "Generating the Link", "body": "Open the active route in the Routes tab and click Share Tracking Link. A unique public URL is generated instantly. Copy it and send it by text, email, or paste it into a patient notification. The link is active for the duration of the route and expires automatically when the route is marked complete." },
+        { "timestamp": "0:22", "name": "What the Recipient Sees", "body": "The public tracking page shows the driver's live location on a map, estimated arrival time at the next stop, and the number of stops remaining. No login is required and no account information is exposed. The page refreshes automatically as the driver progresses." }
+      ]
+    },
+    {
+      "id": "feat-public-order-tracking",
+      "transcript_segments": [
+        { "timestamp": "0:00", "name": "Overview", "body": "Per-order tracking links let individual recipients follow their specific delivery — ideal for pharmacies sending medication to patients who want to know their exact ETA." },
+        { "timestamp": "0:08", "name": "Generating the Link", "body": "Open any order in the Orders list and click Share Order Tracking. A unique link tied to that order is generated. Send it to the recipient by SMS or email. The link shows only that recipient's stop — not the full route — so no other delivery information is exposed." },
+        { "timestamp": "0:22", "name": "Recipient Experience", "body": "The recipient sees the driver's live location, their estimated arrival time, and the delivery status — Out for Delivery, Arriving Now, or Delivered. Once the driver completes the stop, the page updates to show delivery confirmed with the timestamp and proof-of-delivery record." }
+      ]
+    },
+    {
+      "id": "feat-route-builder-web",
+      "transcript_segments": [
+        { "timestamp": "0:00", "name": "Overview", "body": "The Route Builder lets dispatchers turn a list of pending orders into an optimized, ready-to-dispatch route in seconds — no manual planning required." },
+        { "timestamp": "0:10", "name": "Selecting Orders", "body": "Open the Route Builder from the main nav. Your pending orders for the day are listed on the left. Check the boxes next to the orders you want to include in this route — filter by zone, time window, or client to narrow the list. The map on the right previews the stop locations as you select them." },
+        { "timestamp": "0:25", "name": "Optimizing & Reviewing", "body": "Click Optimize Route. The platform calculates the most efficient stop sequence using live traffic conditions and Google Maps routing data. Review the proposed order on the map and in the stop list. Drag stops to reorder them manually if you know the local area better than the algorithm — changes are reflected on the map immediately." },
+        { "timestamp": "0:40", "name": "Dispatching", "body": "When the route looks right, click Dispatch, select a driver from the available roster, and confirm. The route is on the driver's phone in seconds. You'll see their progress in the Live Tracking view as soon as they tap Start." }
+      ]
+    },
+    {
+      "id": "feat-route-builder-driver",
+      "transcript_segments": [
+        { "timestamp": "0:00", "name": "Overview", "body": "Drivers can build their own routes directly in the mobile app — selecting their orders for the day and letting DoitDelivery plot the most efficient sequence before they hit the road." },
+        { "timestamp": "0:12", "name": "Selecting Orders", "body": "From the Orders tab, tap the checkbox next to each order you want to include. You can filter by pickup zone or time window to see only today's relevant orders. As you select, a running count shows how many stops are in your planned route and the estimated total drive time." },
+        { "timestamp": "0:28", "name": "Building & Starting", "body": "Tap Build Route. The app optimizes the stop sequence and shows the full route on a map with an estimated completion time. Swipe through the stop list to review each address and any special handling notes. When you're ready to go, tap Start Route to enter Driving Mode and begin turn-by-turn navigation to your first stop." }
+      ]
+    },
+    {
+      "id": "feat-scheduled-routes",
+      "transcript_segments": [
+        { "timestamp": "0:00", "name": "Overview", "body": "Scheduled Routes let drivers and dispatchers set up recurring routes that repeat on a defined schedule — ideal for daily lab pickups from the same set of clinics." },
+        { "timestamp": "0:08", "name": "Creating a Scheduled Route", "body": "In the app, tap Scheduled Routes and then New Schedule. Select the stops for this route, set the recurrence — daily, weekdays, or specific days — and choose the start time. The schedule saves and the route automatically appears in your queue on the configured days, pre-built and ready to start." },
+        { "timestamp": "0:22", "name": "Managing Schedules", "body": "Your Scheduled Routes list shows all active schedules with their next run date and status. Tap any schedule to edit the stop list, adjust the time, or pause it for a specific date — useful for holidays or coverage changes. Changes take effect from the next scheduled run." }
+      ]
+    },
+    {
+      "id": "feat-driving-mode",
+      "transcript_segments": [
+        { "timestamp": "0:00", "name": "Overview", "body": "Driving Mode is the in-app navigation experience that guides drivers through their route from start to finish — turn-by-turn voice directions, automatic arrival detection, and quick access to stop details without taking eyes off the road." },
+        { "timestamp": "0:12", "name": "The Driving Screen", "body": "Once a route is started, the full-screen map shows the route with the current leg highlighted. The top card shows the next stop address, distance, and estimated arrival time. Voice navigation announces turns and lane guidance automatically. The bottom strip shows all upcoming stops so drivers always know what's next." },
+        { "timestamp": "0:28", "name": "Arrival Detection", "body": "When the driver comes within 100 meters of a stop, the app vibrates, announces arrival through the speaker, and opens the stop detail card. The driver can review recipient name, any delivery notes, and which verification method is required — all before getting out of the vehicle." },
+        { "timestamp": "0:42", "name": "Completing a Stop", "body": "After verifying the delivery, tap Complete Stop. The map advances to the next stop automatically and navigation resumes. After the final stop, the app prompts the driver to complete the route, which closes it out in the portal and triggers any post-route notifications to the dispatcher." }
+      ]
+    },
+    {
+      "id": "feat-completing-stop",
+      "transcript_segments": [
+        { "timestamp": "0:00", "name": "Overview", "body": "Marking a stop complete in the driver app takes a single tap — but the action records the delivery timestamp, GPS location, and any required verification, giving your dispatcher a complete proof-of-delivery record instantly." },
+        { "timestamp": "0:08", "name": "Completing the Stop", "body": "At the delivery location, tap the stop card to open its detail view. Complete any required verification — signature, photo, or barcode scan. Then tap Complete Stop. The stop is marked with a green check on the route map and the next stop navigation begins." },
+        { "timestamp": "0:22", "name": "What Gets Recorded", "body": "Every completion logs the exact time, the driver's GPS coordinates, and any attached verification. This data is immediately visible in the portal to the dispatcher, the client, and the order history — no sync delay, no manual update required." }
+      ]
+    },
+    {
+      "id": "feat-pickup-verify",
+      "transcript_segments": [
+        { "timestamp": "0:00", "name": "Overview", "body": "Pickup verification gives your lab a timestamped record that specimens were collected and in good condition when they left the clinic — protecting both the driver and the lab if a chain-of-custody question ever comes up." },
+        { "timestamp": "0:08", "name": "Verification Methods", "body": "At the pickup stop, tap Verify Pickup. Choose your verification method: take a photo of the packaged specimens, scan the barcode on the lab's manifest or label, or capture a signature from the clinic contact. All three methods can be combined on a single stop if your protocol requires it." },
+        { "timestamp": "0:22", "name": "Syncing to the Portal", "body": "The verification record — photo, scan result, or signature image — uploads to the portal in real time with the driver's GPS location and timestamp. The lab company dispatcher and the originating clinic can view the proof of pickup immediately in their respective portals." }
+      ]
+    },
+    {
+      "id": "feat-delivery-verify",
+      "transcript_segments": [
+        { "timestamp": "0:00", "name": "Overview", "body": "Delivery verification creates a signed proof-of-delivery record at each stop — protecting the pharmacy, the driver, and the patient in the event of a dispute." },
+        { "timestamp": "0:08", "name": "Capturing Verification", "body": "When you arrive at a delivery stop, tap Complete Stop to open the verification screen. If a signature is required, hand the phone to the recipient — they sign with their finger directly on screen. Tap the camera icon to take a delivery photo showing the packages at the door or in the recipient's hands. Enter the recipient's name in the field provided, then tap Confirm." },
+        { "timestamp": "0:22", "name": "The Proof-of-Delivery Record", "body": "The signed record uploads instantly to the order in the portal. The dispatcher and client can view the signature image, delivery photo, driver name, timestamp, and GPS coordinates. The record is stored permanently with the order and is available in the audit trail and any generated invoice." }
+      ]
+    },
+    {
+      "id": "feat-barcode-scan",
+      "transcript_segments": [
+        { "timestamp": "0:00", "name": "Overview", "body": "The in-app barcode scanner gives drivers a fast, error-free way to verify that the right packages are at the right stop — without manual label reading or checklist entry." },
+        { "timestamp": "0:08", "name": "Scanning at Pickup", "body": "At a pickup stop, tap Scan Barcode. Point the camera at the barcode on the lab's specimen bag, order label, or manifest. The app reads the barcode instantly and matches it against the expected order. A green checkmark confirms a match; a red alert means the scanned item doesn't match the expected order and you should contact your dispatcher before proceeding." },
+        { "timestamp": "0:22", "name": "Scanning at Delivery", "body": "The same scanner works at delivery stops to confirm the right packages are going to the right recipient. Scan each package, confirm the match, then complete the stop normally. All scan results are logged with timestamps and uploaded to the order record automatically." }
+      ]
+    },
+    {
+      "id": "feat-driver-stats",
+      "transcript_segments": [
+        { "timestamp": "0:00", "name": "Overview", "body": "The Stats screen gives drivers a personal performance dashboard — deliveries, on-time rate, earnings, and certifications — all in one place." },
+        { "timestamp": "0:08", "name": "Performance Metrics", "body": "Tap Stats in the bottom nav to see your dashboard. The summary cards show total deliveries this week and month, your on-time delivery percentage, average stop time, and total miles driven. Tap any card to drill into the day-by-day breakdown. Your earnings summary shows your total pay for the current pay period based on completed stops." },
+        { "timestamp": "0:22", "name": "Certifications", "body": "The Certifications tab shows your current compliance status. Each certification displays its expiration date and whether it's current, expiring soon, or expired. Tap a certification to view the requirements and upload your renewal document when it's time. Expired certifications may restrict which route types you're eligible for until renewed." }
+      ]
+    },
+    {
+      "id": "feat-driver-pay",
+      "transcript_segments": [
+        { "timestamp": "0:00", "name": "Overview", "body": "Driver pay configuration lets lab companies and pharmacies set exactly how drivers are compensated — per stop, per mile, by route type, or a combination — so earnings calculate automatically from completed deliveries." },
+        { "timestamp": "0:08", "name": "Configuring Pay Rates", "body": "Go to Settings and open Driver Pay. You can set a base per-stop rate that applies to all standard deliveries, a separate rate for STAT stops, a per-mile mileage rate added on top of the stop rate, and flat bonuses for routes over a certain length or in specific zones. Each rate can be set at the organization level or overridden for individual drivers." },
+        { "timestamp": "0:22", "name": "Automatic Calculation", "body": "When a driver completes a route, their earnings are calculated automatically from the completed stops, distance driven, and any applicable bonuses. The total appears on the driver's Stats screen and in the Billing reconciliation ledger, ready for your payroll export." }
+      ]
+    },
+    {
+      "id": "feat-coverage-calendar",
+      "transcript_segments": [
+        { "timestamp": "0:00", "name": "Overview", "body": "The Coverage Calendar shows driver availability across your full roster for the week ahead — so you can see at a glance whether every route has coverage before the day starts." },
+        { "timestamp": "0:10", "name": "Reading the Calendar", "body": "Open Driver Scheduling from the main nav. The weekly calendar view shows each driver as a row with their availability blocks filled in for each day. Green blocks are confirmed available shifts; gray means no availability set; red highlights days where routes are scheduled but no driver is confirmed. Hover any block for the driver name, shift hours, and their assigned route if one exists." },
+        { "timestamp": "0:28", "name": "Setting Availability", "body": "Drivers can set their own availability from the mobile app, or dispatchers can set it from the dashboard. To add or edit a shift, click the calendar cell, choose the start and end time, and save. Recurring availability — like a driver who works every weekday — can be set once and repeated automatically." },
+        { "timestamp": "0:42", "name": "Coverage Alerts", "body": "If any day has routes without a confirmed driver, a warning banner appears at the top of the calendar with the affected days listed. Click the warning to jump to that day's gaps and start resolving them." }
+      ]
+    },
+    {
+      "id": "feat-coverage-gaps",
+      "transcript_segments": [
+        { "timestamp": "0:00", "name": "Overview", "body": "Coverage gaps — days with scheduled routes but no driver confirmed — are flagged automatically so dispatch managers can act before the day starts, not scramble when it's too late." },
+        { "timestamp": "0:08", "name": "Finding Gaps", "body": "Open the Coverage Calendar and look for the red gap indicators. Each gap shows the route name, scheduled time, and the number of stops affected. Click a gap to open the resolution panel, which shows all drivers with availability on that date sorted by proximity to the route's first stop." },
+        { "timestamp": "0:22", "name": "Filling the Gap", "body": "Select the best available driver and click Assign. They receive a notification that they've been added to the route. If no drivers are available, use the Notes field to flag it for escalation, or adjust the route start time to better match who's available. All assignment changes are logged so your team has full visibility into how coverage was resolved." }
+      ]
+    },
+    {
+      "id": "feat-alert-rules",
+      "transcript_segments": [
+        { "timestamp": "0:00", "name": "Overview", "body": "Alert rules define when the system sends automated notifications — late pickups, missed stops, SLA breaches, and driver inactivity — so your team can respond to exceptions before they become problems." },
+        { "timestamp": "0:12", "name": "Creating a Rule", "body": "Go to Notifications in Settings and click New Alert Rule. Choose the trigger type: Late Pickup fires when a driver hasn't reached a pickup stop within a defined window after the scheduled time; Missed Stop fires when a stop is skipped; SLA Breach fires when a delivery hasn't completed before its deadline. Set the threshold — for example, 15 minutes past scheduled time." },
+        { "timestamp": "0:28", "name": "Configuring Recipients & Channels", "body": "For each rule, choose who gets notified: all dispatchers on duty, specific team members, the client contact, or the driver themselves. Choose the channel — in-app notification, email, or SMS. Multiple recipients and channels can be combined on a single rule." },
+        { "timestamp": "0:42", "name": "Saving & Testing", "body": "Save the rule and it becomes active immediately for all new routes. Use the Test Alert button to send a sample notification to the configured recipients so you can verify the routing before a real event fires." }
+      ]
+    },
+    {
+      "id": "feat-notif-channels",
+      "transcript_segments": [
+        { "timestamp": "0:00", "name": "Overview", "body": "Notification channels control how and where alerts reach your team — push notification, email, or SMS — and which individuals receive which types of alerts." },
+        { "timestamp": "0:08", "name": "Configuring Channels", "body": "Go to Notifications and open the Channels tab. Each team member listed has toggles for push, email, and SMS. Enable the channels that match how that person works — dispatchers who are always at a desk may prefer email; drivers and field managers usually prefer push. SMS is useful for critical alerts where you need guaranteed delivery even without a data connection." },
+        { "timestamp": "0:22", "name": "Quiet Hours & Escalations", "body": "Set quiet hours for each channel so after-hours alerts don't wake your team for routine events. For critical alert types, configure an escalation: if the primary recipient doesn't acknowledge within a set time, the alert automatically forwards to a secondary contact. All notification history is logged so you can audit who received what and when." }
+      ]
+    },
+    {
+      "id": "feat-notif-log",
+      "transcript_segments": [
+        { "timestamp": "0:00", "name": "Overview", "body": "The Notification Log gives you a complete history of every alert the system has sent — what triggered it, who received it, and whether it was acknowledged." },
+        { "timestamp": "0:08", "name": "Browsing the Log", "body": "Open Notifications and click the Log tab. Alerts are listed in reverse chronological order with the trigger type, affected route or order, recipients, channel used, send time, and status. Filter by date range, alert type, or team member to find specific events. Each row expands to show the full alert content and the delivery receipt from the channel provider." },
+        { "timestamp": "0:22", "name": "Using the Log for Review", "body": "The notification log is useful for post-incident review — if a client claims they weren't notified of a delay, you can pull the exact record showing when the alert was sent, to what address, and the delivery status. Export the log to CSV for compliance reporting or internal review." }
+      ]
+    },
+    {
+      "id": "feat-billing-dashboard",
+      "transcript_segments": [
+        { "timestamp": "0:00", "name": "Overview", "body": "The Billing Dashboard gives lab companies and pharmacies a high-level financial picture: total revenue, outstanding invoices, driver pay liability, and net margin — all updated in real time as routes complete." },
+        { "timestamp": "0:12", "name": "Summary Cards", "body": "The top row shows four key figures for the current billing period: total invoiced to clients, total payments received, total driver pay earned across all completed routes, and net revenue. Below that, a chart shows daily delivery volume and revenue trend for the period, so you can spot high-traffic days and seasonal patterns." },
+        { "timestamp": "0:28", "name": "Outstanding Items", "body": "The Outstanding Invoices table lists every unpaid client invoice with the due date and amount. Click any row to view the full invoice detail, download the PDF, or send a payment reminder to the client contact. Overdue invoices are highlighted in amber or red based on how late they are." },
+        { "timestamp": "0:42", "name": "Drilling Down", "body": "Click any client name in the billing table to see their full invoice history, payment status, and average days to pay. This view also shows route-level profitability for that client — how much revenue they generated versus how much driver time and mileage was spent serving them." }
+      ]
+    },
+    {
+      "id": "feat-invoice-mgmt",
+      "transcript_segments": [
+        { "timestamp": "0:00", "name": "Overview", "body": "DoitDelivery generates invoices automatically at the end of each billing period — itemized by delivery, route, or flat rate depending on your billing configuration — so your team spends less time on manual billing." },
+        { "timestamp": "0:08", "name": "Viewing & Filtering Invoices", "body": "Open Billing and click Invoices. Use the filters to find invoices by client, status, or date range. Each invoice shows the billing period, number of deliveries included, total amount, and payment status. Click any invoice to see the full line-item breakdown: each stop, its delivery timestamp, route, driver, and the rate applied." },
+        { "timestamp": "0:22", "name": "Downloading & Sending", "body": "Click Download to export the invoice as a PDF — ready to send to the client or attach to an accounts-receivable workflow. Click Send Invoice to email it directly to the client's billing contact on file. The invoice status updates automatically from Sent to Paid when payment is recorded, or you can mark it paid manually after receiving a check or wire." }
+      ]
+    },
+    {
+      "id": "feat-billing-recon",
+      "transcript_segments": [
+        { "timestamp": "0:00", "name": "Overview", "body": "Billing reconciliation lets you verify that every completed delivery in a billing period is accounted for — matching driver activity against client charges before invoices go out." },
+        { "timestamp": "0:08", "name": "Running Reconciliation", "body": "Go to Billing and open the Reconciliation tab. Select the billing period and click Generate. The system pulls every completed stop, the driver who completed it, the client it was billed to, and the rate applied. Any stops missing a client assignment or a billing rate are flagged for review." },
+        { "timestamp": "0:22", "name": "Resolving Discrepancies", "body": "Flagged items appear in a review queue. Click any item to see the full stop record, assign the correct client or rate, and clear the flag. Once all items are resolved, the reconciled totals feed into the invoice generation and driver pay calculations, ensuring both sides of the ledger balance before anything is sent." }
+      ]
+    },
+    {
+      "id": "feat-route-profit",
+      "transcript_segments": [
+        { "timestamp": "0:00", "name": "Overview", "body": "Route profitability analysis shows you the margin on each route — revenue billed to the client minus driver pay and mileage costs — so you can identify which routes are profitable and which need repricing." },
+        { "timestamp": "0:08", "name": "Viewing Route Profitability", "body": "Go to Reports and open Route Profitability. Select a date range and click Run Report. Each route is listed with its client, driver, total stops, revenue charged, driver pay earned, estimated mileage cost, and calculated margin. Sort by margin to quickly identify outliers — both the high performers and the routes that are costing more than they're generating." },
+        { "timestamp": "0:22", "name": "Using the Data", "body": "Click any route to see the stop-level breakdown. If a route has thin margins, you'll see whether it's the pricing, the stop count, the mileage, or a combination. Use this data when renegotiating client rates or restructuring route zones to improve efficiency." }
+      ]
+    },
+    {
+      "id": "feat-internal-costs",
+      "transcript_segments": [
+        { "timestamp": "0:00", "name": "Overview", "body": "Internal cost tracking lets you record operational expenses — vehicle maintenance, fuel surcharges, supplies, and other overhead — so your profit calculations reflect your true cost of delivery, not just driver pay." },
+        { "timestamp": "0:08", "name": "Recording Costs", "body": "Go to Billing and open Internal Costs. Click Add Cost to log an expense. Enter the category, amount, date, and an optional note. You can attach a receipt photo by uploading an image or using the mobile app. Costs can be assigned to a specific route, driver, or recorded as a general overhead item." },
+        { "timestamp": "0:22", "name": "Cost vs. Revenue View", "body": "The Internal Costs summary shows total expenses for the period broken down by category alongside your revenue totals, giving you a true operating margin view. Export the data to CSV to feed into your accounting system or build your own analysis." }
+      ]
+    },
+    {
+      "id": "feat-route-audit",
+      "transcript_segments": [
+        { "timestamp": "0:00", "name": "Overview", "body": "The Route Audit Trail is the complete historical record of a finished route — every stop, timestamp, driver action, exception, and verification — in a single scrollable view." },
+        { "timestamp": "0:12", "name": "Opening the Audit Trail", "body": "Find a completed route in the Routes tab and click View Audit. The timeline view shows every event in chronological order: route started, each stop arrived and completed or skipped, any alerts that fired, driver messages sent, and the route completed event. Each event has an exact timestamp and, where applicable, a GPS coordinate and the driver's name." },
+        { "timestamp": "0:28", "name": "Stop-Level Detail", "body": "Click any stop in the timeline to expand its full record: arrival time, completion time, dwell time at the location, verification method used, any notes the driver added, and proof-of-delivery attachments — signature image or delivery photo. This is the record you'd reference for a client dispute or a compliance audit." },
+        { "timestamp": "0:42", "name": "Exporting the Audit", "body": "Click Export to download the full audit trail as a PDF or CSV. The PDF includes the route map with stop markers, the timeline, and all verification images — a complete chain-of-custody document ready to share with a client or regulatory body." }
+      ]
+    },
+    {
+      "id": "feat-gps-trail",
+      "transcript_segments": [
+        { "timestamp": "0:00", "name": "Overview", "body": "GPS Trail Review lets you replay a driver's exact path for any completed route — stop by stop, with breadcrumbs showing every recorded location point from start to finish." },
+        { "timestamp": "0:08", "name": "Viewing the Trail", "body": "Open a completed route and click GPS Trail. The map loads the driver's recorded path as a continuous line with breadcrumb markers. Play the route replay using the timeline scrubber at the bottom — the driver marker moves along the path in real time. Each breadcrumb shows the timestamp and speed at that point when you hover over it." },
+        { "timestamp": "0:22", "name": "Using the Trail", "body": "The GPS trail is useful for verifying that a driver visited the correct locations, investigating a missed stop, or responding to a client who claims a delivery didn't happen. The data is logged throughout the route and stored permanently with the route record." }
+      ]
+    },
+    {
+      "id": "feat-dwell-analysis",
+      "transcript_segments": [
+        { "timestamp": "0:00", "name": "Overview", "body": "Dwell time analysis shows how long drivers spent at each stop — from arrival to departure — across all their routes, helping you identify which stops are taking longer than expected and where time is being lost." },
+        { "timestamp": "0:08", "name": "Running the Report", "body": "Go to Reports and open Dwell Analysis. Choose a date range and optionally filter by driver, client, or route. The report shows each stop with average dwell time, minimum, maximum, and the number of times that stop appeared in a route during the period. Stops with unusually high dwell times are highlighted." },
+        { "timestamp": "0:22", "name": "Interpreting the Data", "body": "High dwell times at a specific clinic might mean the driver is waiting for staff to hand off specimens — a process issue you can address with that client. High dwell times across all stops for a specific driver might indicate they need coaching on the verification workflow. Use the data to have targeted conversations rather than guessing." }
+      ]
+    },
+    {
+      "id": "feat-client-mgmt",
+      "transcript_segments": [
+        { "timestamp": "0:00", "name": "Overview", "body": "The Client Management panel gives dispatchers and operations managers a central place to view and update every client account — addresses, contacts, service settings, and billing configuration — without leaving the dashboard." },
+        { "timestamp": "0:08", "name": "Viewing & Editing a Client", "body": "Open the Clients tab and search or scroll to find the client. The client detail page shows their primary address, all service locations, primary contact, assigned routes, and current account status. Click Edit to update any field — contact information, pickup schedule preferences, STAT notification settings, or their billing rate configuration." },
+        { "timestamp": "0:22", "name": "Client History & Notes", "body": "The History tab on each client record shows every order placed, delivery completed, and any exceptions in the last 90 days. Use the Notes field to leave internal context that your whole team can see — things like gate codes, preferred pickup contact, or special handling requirements for that location." }
+      ]
+    },
+    {
+      "id": "feat-invite-client",
+      "transcript_segments": [
+        { "timestamp": "0:00", "name": "Overview", "body": "Inviting a new lab client user gives them access to their portal where they can place pickup requests, track deliveries, and view their invoices — all without needing to call your dispatch team." },
+        { "timestamp": "0:08", "name": "Sending the Invitation", "body": "Go to Clients, open the client account, and click the Users tab. Click Invite User, enter their name and email address, and choose their access level — standard view access or admin access if they need to manage other users at their location. Click Send Invitation. They receive an email with a link to create their account and set a password." },
+        { "timestamp": "0:22", "name": "Access & Permissions", "body": "Once they've registered, their account is tied to that client profile. They can see all orders for their location, track live deliveries, download invoices, and submit pickup requests. They can only see their own organization's data — not other clients' orders or your internal dispatch operations." }
+      ]
+    },
+    {
+      "id": "feat-user-org-mgmt",
+      "transcript_segments": [
+        { "timestamp": "0:00", "name": "Overview", "body": "The Users and Organization Settings panel is where pharmacy admins manage their internal team — adding dispatchers, adjusting permissions, and keeping the organization profile up to date." },
+        { "timestamp": "0:08", "name": "Managing Users", "body": "Go to Settings and open the Users tab. Each user is listed with their name, email, role, and last active date. Click a user to change their role — dispatcher, viewer, or admin — or deactivate their account when they leave the team. To add someone new, click Invite and enter their email. They receive an invitation link and are added to your organization when they register." },
+        { "timestamp": "0:22", "name": "Organization Settings", "body": "The Organization tab lets you update your business name, primary address, billing contact, and notification email addresses. API keys for external integrations are managed here as well — generate a new key, view existing keys, and revoke any that should no longer be active. All changes are logged in the organization audit trail." }
+      ]
+    }
+  ]
+}
