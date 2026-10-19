@@ -50,14 +50,12 @@ body {
   box-shadow: 0 1px 0 rgba(255,255,255,0.08);
 }
 .topbar-logo {
-  font-family: 'Poppins', sans-serif;
-  font-size: 16px;
-  font-weight: 700;
-  color: #fff;
-  letter-spacing: -0.01em;
   text-decoration: none;
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
 }
-.topbar-logo span { color: var(--green); }
+.topbar-logo img { height: 22px; width: auto; display: block; }
 .topbar-title {
   font-size: 13px;
   font-weight: 500;
@@ -452,7 +450,7 @@ body {
 
 <!-- ── Top bar ── -->
 <nav class="topbar">
-  <a class="topbar-logo" href="index.html">Doit<span>Delivery</span></a>
+  <a class="topbar-logo" href="index.html"><img src="https://cdn.doitdelivery.com/logo-dark.png" alt="DoitDelivery"></a>
   <span class="topbar-title">Video Library</span>
   <div class="topbar-right">
     <span class="topbar-badge loading" id="api-badge">Loading…</span>
