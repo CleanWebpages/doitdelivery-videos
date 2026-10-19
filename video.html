@@ -920,11 +920,9 @@ body {
       });
       setProgress(98);
 
-      // Step 5 — get playback URL
+      // Step 5 — get playback URL via the public catalog endpoint
       setStatus('Almost done…');
-      const dlRes = await fetch(API_BASE + '/files/' + fileId + '/download', {
-        headers: { 'Authorization': 'Bearer ' + token },
-      });
+      const dlRes = await fetch(API_BASE + '/video_catalog_items/' + encodeURIComponent(videoId) + '/video_url');
       if (!dlRes.ok) throw new Error('Could not get playback URL');
       const dlData = (await dlRes.json());
       const playbackUrl = (dlData.data || dlData).download_url;
@@ -1018,19 +1016,17 @@ body {
     videoSection.className = 'video-section';
     videoSection.id = 'video-section';
 
-    // If a file was uploaded, get a fresh presigned download URL
-    let playbackUrl = video.video_url || '';
-    if (apiItem.video_file_id) {
-      try {
-        const dlRes = await fetch(API_BASE + '/files/' + apiItem.video_file_id + '/download', {
-          headers: { 'Authorization': 'Bearer ' + token },
-        });
-        if (dlRes.ok) {
-          const dlJson = await dlRes.json();
-          playbackUrl = (dlJson.data || dlJson).download_url || '';
-        }
-      } catch {}
-    }
+    // Get a fresh presigned playback URL (public endpoint, no auth needed)
+    let playbackUrl = '';
+    try {
+      const dlRes = await fetch(API_BASE + '/video_catalog_items/' + encodeURIComponent(videoId) + '/video_url');
+      if (dlRes.ok) {
+        const dlJson = await dlRes.json();
+        playbackUrl = (dlJson.data || dlJson).download_url || '';
+      }
+      // 404 = no video uploaded yet; fall through to video.video_url
+    } catch {}
+    if (!playbackUrl) playbackUrl = video.video_url || '';
 
     function showVideoPlayer(src) {
       const vid = document.createElement('video');
