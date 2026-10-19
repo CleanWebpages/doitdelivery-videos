@@ -334,9 +334,11 @@ body {
   align-items: center;
   gap: 4px;
   margin-top: 2px;
+  user-select: none;
 }
 .seg-attribution.has-history { cursor: pointer; }
 .seg-attribution.has-history:hover { color: var(--navy-mid); }
+.seg-attr-arrow { font-size: 10px; opacity: 0.55; }
 .seg-history {
   display: none;
   flex-direction: column;
@@ -1103,11 +1105,11 @@ body {
                               + ' at ' + d.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
             } catch {}
           }
-          attrDiv.innerHTML = `<span>Edited by ${esc(displayName)}${esc(dateStr)}</span>`
-                            + (hasHistory ? `<span style="opacity:0.5;font-size:10px">▸</span>` : '');
+          const arrow = hasHistory ? `<span class="seg-attr-arrow">▾</span>` : '';
+          attrDiv.innerHTML = `<span>Edited by ${esc(displayName)}${esc(dateStr)}</span>${arrow}`;
 
           const histPanel = document.createElement('div');
-          histPanel.className = 'seg-history';
+          histPanel.className = 'seg-history' + (hasHistory ? ' open' : '');
 
           if (hasHistory) {
             [...seg_data.edits].reverse().forEach(edit => {
@@ -1124,18 +1126,22 @@ body {
               }
               entry.innerHTML = `<strong>${esc(edName)}</strong> · ${esc(edDate)}`;
               if (edit.prev) {
+                const label = document.createElement('div');
+                label.style.cssText = 'font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:0.06em;color:#94a3b8;margin-top:4px;margin-bottom:2px;';
+                label.textContent = 'Previous version';
+                entry.appendChild(label);
                 const prevDiv = document.createElement('div');
                 prevDiv.className = 'seg-history-prev';
-                prevDiv.textContent = edit.prev.length > 140 ? edit.prev.slice(0, 140) + '…' : edit.prev;
+                prevDiv.textContent = edit.prev.length > 200 ? edit.prev.slice(0, 200) + '…' : edit.prev;
                 entry.appendChild(prevDiv);
               }
               histPanel.appendChild(entry);
             });
 
-            const arrow = attrDiv.querySelector('span:last-child');
+            const arrowEl = attrDiv.querySelector('.seg-attr-arrow');
             attrDiv.addEventListener('click', () => {
               histPanel.classList.toggle('open');
-              if (arrow) arrow.textContent = histPanel.classList.contains('open') ? '▾' : '▸';
+              if (arrowEl) arrowEl.textContent = histPanel.classList.contains('open') ? '▾' : '▸';
             });
           }
 
