@@ -193,6 +193,26 @@ body {
 }
 .upload-pct { font-size: 11px; color: rgba(255,255,255,0.4); }
 .upload-status { font-size: 12px; color: rgba(255,255,255,0.5); margin-top: 4px; }
+.video-replace-bar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 12px;
+  background: var(--surface);
+  border-top: 1px solid var(--border);
+  flex-wrap: wrap;
+}
+.video-replace-bar .upload-progress {
+  margin-top: 0;
+  flex-direction: row;
+  align-items: center;
+  gap: 8px;
+  width: auto;
+  flex: 1;
+}
+.video-replace-bar .upload-bar { flex: 1; min-width: 80px; }
+.video-replace-bar .upload-status { margin-top: 0; color: var(--muted); }
+.video-replace-btn { margin-top: 0; font-size: 11px; padding: 5px 14px; }
 
 /* ── Metadata card ── */
 .meta-card {
@@ -848,11 +868,14 @@ body {
 
   // ── Video upload ───────────────────────────────────────────────
   async function uploadVideo(file, videoId, onSuccess) {
-    const uploadBtn   = document.getElementById('upload-btn');
-    const progressEl  = document.getElementById('upload-progress');
-    const fillEl      = document.getElementById('upload-fill');
-    const pctEl       = document.getElementById('upload-pct');
-    const statusEl    = document.getElementById('upload-status');
+    // Find UI elements relative to the file input's parent container
+    const vsEl      = document.getElementById('video-section');
+    const container = vsEl ? (vsEl.querySelector('.video-replace-bar') || vsEl.querySelector('.video-placeholder')) : null;
+    const uploadBtn  = container && container.querySelector('.video-upload-btn');
+    const progressEl = container && container.querySelector('.upload-progress');
+    const fillEl     = container && container.querySelector('.upload-fill');
+    const pctEl      = container && container.querySelector('.upload-pct');
+    const statusEl   = container && container.querySelector('.upload-status');
 
     function setStatus(msg) { if (statusEl) statusEl.textContent = msg; }
     function setProgress(pct) {
@@ -1028,41 +1051,59 @@ body {
     } catch {}
     if (!playbackUrl) playbackUrl = video.video_url || '';
 
+    function wireUploadInput(container) {
+      const btn       = container.querySelector('.video-upload-btn');
+      const fileInput = container.querySelector('.video-file-input');
+      if (!btn || !fileInput) return;
+      btn.addEventListener('click', () => fileInput.click());
+      fileInput.addEventListener('change', () => {
+        const file = fileInput.files[0];
+        if (file) uploadVideo(file, videoId, showVideoPlayer);
+      });
+    }
+
     function showVideoPlayer(src) {
+      videoSection.innerHTML = '';
       const vid = document.createElement('video');
       vid.src = src;
       vid.controls = true;
       vid.preload = 'metadata';
-      videoSection.innerHTML = '';
       videoSection.appendChild(vid);
+      if (token) {
+        const bar = document.createElement('div');
+        bar.className = 'video-replace-bar';
+        bar.innerHTML = `
+          <button class="video-upload-btn video-replace-btn">↑ Replace Video</button>
+          <div class="upload-progress" hidden>
+            <div class="upload-bar"><div class="upload-fill"></div></div>
+            <div class="upload-pct">0%</div>
+          </div>
+          <div class="upload-status"></div>
+          <input type="file" class="video-file-input" accept="video/mp4,video/quicktime,.mp4,.mov" style="display:none">`;
+        videoSection.appendChild(bar);
+        wireUploadInput(bar);
+      }
     }
 
     if (playbackUrl) {
       showVideoPlayer(playbackUrl);
     } else {
       videoSection.innerHTML = `
-        <div class="video-placeholder" id="video-placeholder">
+        <div class="video-placeholder">
           <div class="video-placeholder-icon">▶</div>
           <div class="video-placeholder-text">Video Coming Soon</div>
           <div class="video-placeholder-dur">${esc(video.duration_label)}</div>
-          ${token ? '<button class="video-upload-btn" id="upload-btn">↑ Upload Video</button>' : ''}
-          <div class="upload-progress" id="upload-progress" hidden>
-            <div class="upload-bar"><div class="upload-fill" id="upload-fill"></div></div>
-            <div class="upload-pct" id="upload-pct">0%</div>
+          ${token ? `
+          <button class="video-upload-btn">↑ Upload Video</button>
+          <div class="upload-progress" hidden>
+            <div class="upload-bar"><div class="upload-fill"></div></div>
+            <div class="upload-pct">0%</div>
           </div>
-          <div class="upload-status" id="upload-status"></div>
-          <input type="file" id="video-file-input" accept="video/mp4,video/quicktime,.mp4,.mov" style="display:none">
+          <div class="upload-status"></div>
+          <input type="file" class="video-file-input" accept="video/mp4,video/quicktime,.mp4,.mov" style="display:none">
+          ` : ''}
         </div>`;
-
-      const uploadBtn = document.getElementById('upload-btn');
-      if (uploadBtn) {
-        const fileInput = document.getElementById('video-file-input');
-        uploadBtn.addEventListener('click', () => fileInput.click());
-        fileInput.addEventListener('change', () => {
-          const file = fileInput.files[0];
-          if (file) uploadVideo(file, videoId, showVideoPlayer);
-        });
-      }
+      wireUploadInput(videoSection);
     }
 
     leftCol.appendChild(videoSection);
