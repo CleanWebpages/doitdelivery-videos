@@ -404,9 +404,16 @@ body {
   const logoutBtn  = document.getElementById('logout-btn');
   const loginError = document.getElementById('login-error');
 
+  function getToken() {
+    if (token) return token;
+    try { token = localStorage.getItem('doit_video_token'); } catch {}
+    return token || null;
+  }
+
   function authHeaders() {
-    return token ? { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token }
-                 : { 'Content-Type': 'application/json' };
+    const t = getToken();
+    return t ? { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + t }
+             : { 'Content-Type': 'application/json' };
   }
 
   function showLogin() {
@@ -431,8 +438,9 @@ body {
         body: JSON.stringify({ data: { email, password } }),
       });
       const j = await res.json();
-      if (!res.ok) throw new Error(j.error || j.message || 'Invalid credentials');
-      token = j.access_token || (j.data && j.data.access_token);
+      if (!res.ok) throw new Error((j.data && j.data.error) || j.error || j.message || 'Invalid credentials');
+      token = (j.data && j.data.access_token) || j.access_token || null;
+      if (!token) throw new Error('No access token in response');
       try { localStorage.setItem('doit_video_token', token); } catch {}
       hideLogin();
       initApp();
@@ -685,6 +693,7 @@ body {
 
   // ── API calls ──────────────────────────────────────────────────
   async function patchApi(vid, patch) {
+    if (!getToken()) { showLogin(); return; }
     const existing = apiData[vid] || {};
     const merged = { transcript: existing.transcript, team_notes: existing.team_notes, done: existing.done, ...patch };
     try {
@@ -693,7 +702,7 @@ body {
         headers: authHeaders(),
         body: JSON.stringify({ data: merged }),
       });
-      if (res.status === 401) { showLogin(); return; }
+      if (res.status === 401) { token = null; try { localStorage.removeItem('doit_video_token'); } catch {} showLogin(); return; }
       if (res.ok) { const j = await res.json(); apiData[vid] = j.data || j; }
     } catch {}
   }
@@ -713,6 +722,7 @@ body {
     const transcript = panel.querySelector('.ta-transcript').value;
     const team_notes = panel.querySelector('.ta-notes').value;
     const done = card.classList.contains('done');
+    if (!getToken()) { showLogin(); return; }
     setStatus(panel, 'saving', 'Saving…');
     try {
       const res = await fetch(API_BASE + '/video_catalog_items/' + vid, {
