@@ -222,6 +222,22 @@ body {
 .save-status.saving { color: #d97706; }
 .save-status.saved  { color: #15803d; }
 .save-status.error  { color: #dc2626; }
+.unsaved-dot { font-size: 11px; font-weight: 600; color: #d97706; }
+.save-btn {
+  background: var(--green);
+  color: var(--navy);
+  border: none;
+  border-radius: 6px;
+  padding: 4px 14px;
+  font-size: 12px;
+  font-weight: 700;
+  font-family: 'Inter', sans-serif;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: background 0.15s, opacity 0.15s;
+}
+.save-btn:hover { background: var(--green-dim); }
+.save-btn:disabled { opacity: 0.5; cursor: not-allowed; }
 
 /* ── Segment editor ── */
 .segment-list {
@@ -309,6 +325,44 @@ body {
 }
 .segment-text:focus { border-color: var(--navy-mid); box-shadow: 0 0 0 2px rgba(5,31,78,0.07); }
 .segment-text::placeholder { color: #b0bcd4; }
+.segment-card.dirty { border-left: 3px solid var(--green-dim); }
+.seg-attribution {
+  font-size: 11px;
+  color: var(--fg3);
+  cursor: default;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-top: 2px;
+}
+.seg-attribution.has-history { cursor: pointer; }
+.seg-attribution.has-history:hover { color: var(--navy-mid); }
+.seg-history {
+  display: none;
+  flex-direction: column;
+  gap: 6px;
+  margin-top: 6px;
+  background: #f0f4fb;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 8px 10px;
+}
+.seg-history.open { display: flex; }
+.seg-history-entry {
+  font-size: 11px;
+  color: var(--fg3);
+  border-left: 2px solid #c0cce0;
+  padding-left: 8px;
+}
+.seg-history-entry strong { color: var(--fg); font-weight: 600; }
+.seg-history-prev {
+  margin-top: 3px;
+  font-size: 11px;
+  color: var(--fg3);
+  white-space: pre-wrap;
+  word-break: break-word;
+  font-style: italic;
+}
 .add-segment-btn {
   margin: 0 16px 14px;
   background: none;
@@ -886,15 +940,29 @@ body {
 
     // Auto-save state
     let saveTimer = null;
+    let isDirty = false;
+
     const saveStatusEl = document.createElement('span');
     saveStatusEl.className = 'save-status';
+
+    const unsavedDot = document.createElement('span');
+    unsavedDot.className = 'unsaved-dot';
+    unsavedDot.textContent = '● Unsaved';
+    unsavedDot.style.display = 'none';
 
     function setSaveStatus(cls, text) {
       saveStatusEl.className = 'save-status' + (cls ? ' ' + cls : '');
       saveStatusEl.textContent = text;
     }
 
+    function setDirty(val) {
+      isDirty = val;
+      unsavedDot.style.display = val ? 'inline' : 'none';
+      if (val) setSaveStatus('', '');
+    }
+
     function scheduleAutoSave() {
+      setDirty(true);
       clearTimeout(saveTimer);
       saveTimer = setTimeout(saveAll, 2000);
     }
@@ -907,6 +975,7 @@ body {
       const payload = USE_SEGMENTS_API
         ? { transcript_segments: segs.map(s => ({ timestamp: s.timestamp, name: s.name, body: s.text })), team_notes, done }
         : { transcript: serializeTranscript(segs), team_notes, done };
+      saveBtn.disabled = true;
       setSaveStatus('saving', 'Saving…');
       try {
         const res = await fetch(API_BASE + '/video_catalog_items/' + encodeURIComponent(videoId), {
@@ -923,10 +992,23 @@ body {
         if (res.ok) {
           const j = await res.json();
           Object.assign(apiItem, j.data || j);
+          setDirty(false);
+          segmentList.querySelectorAll('.segment-card.dirty').forEach(c => c.classList.remove('dirty'));
           setSaveStatus('saved', 'Saved ✓');
-          setTimeout(() => setSaveStatus('', ''), 2000);
+          // Update per-segment attribution from response without re-rendering
+          const returnedSegs = (j.data || j).transcript_segments;
+          if (Array.isArray(returnedSegs)) {
+            segments.forEach((seg, i) => {
+              if (returnedSegs[i]) {
+                seg.edited_by = returnedSegs[i].edited_by || seg.edited_by;
+                seg.edited_at = returnedSegs[i].edited_at || seg.edited_at;
+                seg.edits = returnedSegs[i].edits || seg.edits;
+              }
+            });
+          }
         } else { throw new Error(); }
       } catch { setSaveStatus('error', 'Error saving'); }
+      saveBtn.disabled = false;
     }
 
     // ── Transcript section ──
@@ -936,7 +1018,18 @@ body {
     const transcriptHeader = document.createElement('div');
     transcriptHeader.className = 'section-header';
     transcriptHeader.innerHTML = '<span class="section-header-title">Transcript</span>';
-    transcriptHeader.appendChild(saveStatusEl);
+
+    const saveBtn = document.createElement('button');
+    saveBtn.className = 'save-btn';
+    saveBtn.textContent = 'Save';
+    saveBtn.addEventListener('click', () => { clearTimeout(saveTimer); saveAll(); });
+
+    const headerRight = document.createElement('div');
+    headerRight.style.cssText = 'display:flex;align-items:center;gap:8px;';
+    headerRight.appendChild(unsavedDot);
+    headerRight.appendChild(saveStatusEl);
+    headerRight.appendChild(saveBtn);
+    transcriptHeader.appendChild(headerRight);
     transcriptBlock.appendChild(transcriptHeader);
 
     const segmentList = document.createElement('div');
@@ -952,12 +1045,19 @@ body {
     let segments;
     const storedSegs = apiItem.transcript_segments;
     if (Array.isArray(storedSegs) && storedSegs.length > 0) {
-      segments = storedSegs.map(s => ({ timestamp: s.timestamp || '0:00', name: s.name || '', text: s.body || s.text || '' }));
+      segments = storedSegs.map(s => ({
+        timestamp: s.timestamp || '0:00',
+        name:      s.name || '',
+        text:      s.body || s.text || '',
+        edited_by: s.edited_by || null,
+        edited_at: s.edited_at || null,
+        edits:     s.edits || [],
+      }));
     } else {
       segments = parseTranscript(apiItem.transcript || '');
     }
     if (segments.length === 0) {
-      segments = [{ timestamp: '0:00', name: '', text: '' }];
+      segments = [{ timestamp: '0:00', name: '', text: '', edited_by: null, edited_at: null, edits: [] }];
     }
 
     function renderSegments() {
@@ -978,14 +1078,70 @@ body {
         const textArea  = card.querySelector('.segment-text');
         const removeBtn = card.querySelector('.segment-remove');
 
-        tsInput.addEventListener('input', () => { segments[idx].timestamp = tsInput.value; scheduleAutoSave(); });
-        nameInput.addEventListener('input', () => { segments[idx].name = nameInput.value; scheduleAutoSave(); });
-        textArea.addEventListener('input', () => { segments[idx].text = textArea.value; scheduleAutoSave(); });
+        tsInput.addEventListener('input', () => { segments[idx].timestamp = tsInput.value; card.classList.add('dirty'); scheduleAutoSave(); });
+        nameInput.addEventListener('input', () => { segments[idx].name = nameInput.value; card.classList.add('dirty'); scheduleAutoSave(); });
+        textArea.addEventListener('input', () => { segments[idx].text = textArea.value; card.classList.add('dirty'); scheduleAutoSave(); });
         removeBtn.addEventListener('click', () => {
           segments.splice(idx, 1);
           renderSegments();
           scheduleAutoSave();
         });
+
+        // Attribution line (shown when backend has stamped the segment)
+        const seg_data = segments[idx];
+        if (seg_data.edited_by || seg_data.edited_at) {
+          const attrDiv = document.createElement('div');
+          const hasHistory = seg_data.edits && seg_data.edits.length > 0;
+          attrDiv.className = 'seg-attribution' + (hasHistory ? ' has-history' : '');
+
+          const displayName = seg_data.edited_by ? seg_data.edited_by.split('@')[0] : '';
+          let dateStr = '';
+          if (seg_data.edited_at) {
+            try {
+              const d = new Date(seg_data.edited_at);
+              dateStr = ' · ' + d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
+                              + ' at ' + d.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
+            } catch {}
+          }
+          attrDiv.innerHTML = `<span>Edited by ${esc(displayName)}${esc(dateStr)}</span>`
+                            + (hasHistory ? `<span style="opacity:0.5;font-size:10px">▸</span>` : '');
+
+          const histPanel = document.createElement('div');
+          histPanel.className = 'seg-history';
+
+          if (hasHistory) {
+            [...seg_data.edits].reverse().forEach(edit => {
+              const entry = document.createElement('div');
+              entry.className = 'seg-history-entry';
+              const edName = edit.by ? edit.by.split('@')[0] : 'Unknown';
+              let edDate = '';
+              if (edit.at) {
+                try {
+                  const d = new Date(edit.at);
+                  edDate = d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
+                         + ' at ' + d.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
+                } catch {}
+              }
+              entry.innerHTML = `<strong>${esc(edName)}</strong> · ${esc(edDate)}`;
+              if (edit.prev) {
+                const prevDiv = document.createElement('div');
+                prevDiv.className = 'seg-history-prev';
+                prevDiv.textContent = edit.prev.length > 140 ? edit.prev.slice(0, 140) + '…' : edit.prev;
+                entry.appendChild(prevDiv);
+              }
+              histPanel.appendChild(entry);
+            });
+
+            const arrow = attrDiv.querySelector('span:last-child');
+            attrDiv.addEventListener('click', () => {
+              histPanel.classList.toggle('open');
+              if (arrow) arrow.textContent = histPanel.classList.contains('open') ? '▾' : '▸';
+            });
+          }
+
+          card.appendChild(attrDiv);
+          card.appendChild(histPanel);
+        }
 
         segmentList.appendChild(card);
       });
@@ -1003,7 +1159,7 @@ body {
 
     addSegBtn.addEventListener('click', () => {
       segments = collectSegments();
-      segments.push({ timestamp: '0:00', name: '', text: '' });
+      segments.push({ timestamp: '0:00', name: '', text: '', edited_by: null, edited_at: null, edits: [] });
       renderSegments();
       // Focus the new segment name input
       const cards = segmentList.querySelectorAll('.segment-card');
