@@ -969,7 +969,7 @@ body {
       saveTimer = setTimeout(saveAll, 2000);
     }
 
-    async function saveAll() {
+    async function saveAll(forceRender = false) {
       if (!getToken()) { showLogin(); return; }
       const segs = collectSegments();
       const team_notes = teamNotesEl.value;
@@ -997,8 +997,8 @@ body {
           setDirty(false);
           segmentList.querySelectorAll('.segment-card.dirty').forEach(c => c.classList.remove('dirty'));
           setSaveStatus('saved', 'Saved ✓');
-          // Update per-segment attribution from response, then re-render if safe
           const returnedSegs = (j.data || j).transcript_segments;
+          console.log('[video.html] PATCH response segments[0]:', JSON.stringify(returnedSegs && returnedSegs[0]));
           if (Array.isArray(returnedSegs)) {
             segments.forEach((seg, i) => {
               if (returnedSegs[i]) {
@@ -1007,8 +1007,8 @@ body {
                 seg.edits = returnedSegs[i].edits || seg.edits;
               }
             });
-            // Only re-render if the user isn't actively typing inside a segment
-            if (!segmentList.contains(document.activeElement)) {
+            // Always re-render on explicit save; skip only for auto-save while typing
+            if (forceRender || !segmentList.contains(document.activeElement)) {
               renderSegments();
             }
           }
@@ -1028,7 +1028,7 @@ body {
     const saveBtn = document.createElement('button');
     saveBtn.className = 'save-btn';
     saveBtn.textContent = 'Save';
-    saveBtn.addEventListener('click', () => { clearTimeout(saveTimer); saveAll(); });
+    saveBtn.addEventListener('click', () => { clearTimeout(saveTimer); saveAll(true); });
 
     const headerRight = document.createElement('div');
     headerRight.style.cssText = 'display:flex;align-items:center;gap:8px;';
