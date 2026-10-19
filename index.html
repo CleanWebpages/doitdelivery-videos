@@ -428,7 +428,7 @@ body {
       const res = await fetch(API_BASE + '/access_tokens', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password }),
+        body: JSON.stringify({ data: { email, password } }),
       });
       const j = await res.json();
       if (!res.ok) throw new Error(j.error || j.message || 'Invalid credentials');
