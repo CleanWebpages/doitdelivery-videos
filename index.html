@@ -117,19 +117,40 @@ body {
   gap: 8px;
   padding: 6px 8px;
   border-radius: 6px;
-  font-size: 13px;
-  font-weight: 500;
-  color: rgba(255,255,255,0.7);
+  font-size: 12px;
+  font-weight: 600;
+  color: rgba(255,255,255,0.8);
   cursor: pointer;
   text-decoration: none;
   transition: background 0.15s, color 0.15s;
   line-height: 1.3;
+  margin-top: 4px;
 }
-.sidebar-link:hover { background: rgba(255,255,255,0.08); color: #fff; }
-.sidebar-link.active { background: rgba(46,204,113,0.15); color: #fff; }
-.sidebar-link.active .sl-dot { background: var(--green); }
-.sl-dot { width: 6px; height: 6px; border-radius: 50%; background: rgba(255,255,255,0.3); flex-shrink: 0; }
+.sidebar-link:hover { background: rgba(255,255,255,0.07); color: #fff; }
+.sl-dot { width: 5px; height: 5px; border-radius: 50%; background: rgba(255,255,255,0.3); flex-shrink: 0; }
 .sl-done { margin-left: auto; font-size: 10px; color: var(--green); flex-shrink: 0; }
+.sl-arrow { font-size: 9px; opacity: 0.4; transition: transform 0.15s; flex-shrink: 0; }
+.sl-arrow.open { transform: rotate(90deg); }
+.sl-vids { display: none; padding-left: 13px; margin-bottom: 2px; }
+.sl-vids.open { display: block; }
+.sl-vid {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 8px;
+  border-radius: 5px;
+  font-size: 11px;
+  font-weight: 400;
+  color: rgba(255,255,255,0.5);
+  cursor: pointer;
+  text-decoration: none;
+  transition: background 0.12s, color 0.12s;
+  line-height: 1.35;
+}
+.sl-vid:hover { background: rgba(255,255,255,0.06); color: rgba(255,255,255,0.9); }
+.sl-vid.done { color: rgba(46,204,113,0.65); }
+.sl-vid-dot { width: 3px; height: 3px; border-radius: 50%; background: rgba(255,255,255,0.2); flex-shrink: 0; }
+.sl-vid.done .sl-vid-dot { background: var(--green); }
 
 .sidebar-divider { height: 1px; background: rgba(255,255,255,0.07); margin: 8px 16px; }
 
@@ -185,22 +206,30 @@ body {
 .progress-fill { height: 100%; background: linear-gradient(90deg, var(--navy), var(--green)); border-radius: 2px; transition: width 0.4s ease; }
 
 /* ── Section ── */
-.section { margin-bottom: 36px; }
+.section {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  overflow: hidden;
+  margin-bottom: 16px;
+}
 .section-title {
   font-family: 'Poppins', sans-serif;
-  font-size: 15px;
+  font-size: 14px;
   font-weight: 600;
   color: var(--navy);
-  margin-bottom: 12px;
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--border);
   display: flex;
   align-items: center;
   gap: 8px;
+  background: #f7f8fc;
 }
-.section-count { font-size: 11px; font-weight: 500; color: var(--fg3); background: var(--border); padding: 2px 8px; border-radius: 100px; }
+.section-count { font-size: 11px; font-weight: 500; color: var(--fg3); background: var(--border); padding: 2px 8px; border-radius: 100px; margin-left: auto; }
 
 /* ── Cards ── */
-.cards { display: grid; gap: 8px; }
-.walkthroughs-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 10px; }
+.cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 10px; padding: 14px 16px; }
+.walkthroughs-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 10px; padding: 14px 16px; }
 
 /* Card thumbnail */
 .card-thumb {
@@ -708,16 +737,68 @@ body {
     sidebarEl.innerHTML = '<div class="sidebar-section-label">Sections</div>';
     catalog.sections.forEach(section => {
       if (!document.getElementById('sec-' + section.id)) return;
-      const doneCount = section.videos.filter(v => (apiData[v.id] || {}).done).length;
-      const link = document.createElement('a');
-      link.className = 'sidebar-link';
-      link.href = '#sec-' + section.id;
-      link.innerHTML = `<span class="sl-dot"></span>${section.title}${doneCount ? `<span class="sl-done">${doneCount}/${section.videos.length}</span>` : ''}`;
-      link.addEventListener('click', e => {
-        e.preventDefault();
+
+      const visibleVideos = section.videos.filter(v => {
+        if (currentFilter === 'all') return true;
+        if (currentFilter === 'published') return v.status === 'published';
+        return v.roles.includes(currentFilter) || v.roles.includes('all');
+      });
+      if (visibleVideos.length === 0) return;
+
+      const doneCount = visibleVideos.filter(v => (apiData[v.id] || {}).done).length;
+
+      // Section header
+      const header = document.createElement('div');
+      header.className = 'sidebar-link';
+      const titleSpan = document.createElement('span');
+      titleSpan.style.cssText = 'flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;';
+      titleSpan.textContent = section.title;
+      header.appendChild(document.createElement('span')).className = 'sl-dot';
+      header.appendChild(titleSpan);
+      if (doneCount) {
+        const done = document.createElement('span');
+        done.className = 'sl-done';
+        done.textContent = doneCount + '/' + visibleVideos.length;
+        header.appendChild(done);
+      }
+      const arrow = document.createElement('span');
+      arrow.className = 'sl-arrow open';
+      arrow.textContent = '▶';
+      header.appendChild(arrow);
+
+      // Nested video links
+      const vidsEl = document.createElement('div');
+      vidsEl.className = 'sl-vids open';
+      visibleVideos.forEach(v => {
+        const isDone = (apiData[v.id] || {}).done;
+        const a = document.createElement('a');
+        a.className = 'sl-vid' + (isDone ? ' done' : '');
+        a.href = 'video.html?id=' + encodeURIComponent(v.id);
+        const dot = document.createElement('span');
+        dot.className = 'sl-vid-dot';
+        const label = document.createElement('span');
+        label.style.cssText = 'flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;';
+        label.textContent = v.title;
+        a.appendChild(dot);
+        a.appendChild(label);
+        a.addEventListener('click', e => e.stopPropagation());
+        vidsEl.appendChild(a);
+      });
+
+      // Toggle expand/collapse on header click; scroll to section on title click
+      header.addEventListener('click', () => {
+        vidsEl.classList.toggle('open');
+        arrow.classList.toggle('open');
+      });
+      titleSpan.addEventListener('click', e => {
+        e.stopPropagation();
+        vidsEl.classList.add('open');
+        arrow.classList.add('open');
         document.getElementById('sec-' + section.id)?.scrollIntoView({ behavior: 'smooth' });
       });
-      sidebarEl.appendChild(link);
+
+      sidebarEl.appendChild(header);
+      sidebarEl.appendChild(vidsEl);
     });
   }
 
