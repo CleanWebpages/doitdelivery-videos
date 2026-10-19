@@ -202,6 +202,30 @@ body {
 .cards { display: grid; gap: 8px; }
 .walkthroughs-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 10px; }
 
+/* Card thumbnail */
+.card-thumb {
+  aspect-ratio: 16/9;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+.cards .card-thumb {
+  max-height: 160px;
+}
+.card-thumb-icon {
+  font-size: 52px;
+  opacity: 0.9;
+  filter: drop-shadow(0 2px 12px rgba(0,0,0,0.5));
+  user-select: none;
+  pointer-events: none;
+}
+.walkthroughs-grid .card-thumb-icon {
+  font-size: 64px;
+}
+
 /* Regular card */
 .card {
   background: var(--surface);
@@ -209,6 +233,10 @@ body {
   border-radius: 8px;
   overflow: hidden;
   transition: border-color 0.15s, box-shadow 0.15s;
+  cursor: pointer;
+  text-decoration: none;
+  display: block;
+  color: inherit;
 }
 .card:hover { border-color: #b8c5de; box-shadow: 0 2px 8px rgba(5,31,78,0.06); }
 .card.published { border-left: 3px solid var(--green); }
@@ -231,12 +259,6 @@ body {
 .card-title { font-weight: 500; font-size: 13.5px; color: var(--fg); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .card-meta { display: flex; gap: 6px; align-items: center; margin-top: 2px; flex-wrap: wrap; }
 .duration { font-size: 11px; color: var(--fg3); font-variant-numeric: tabular-nums; }
-.expand-btn {
-  background: none; border: none; color: #94a8c8; font-size: 15px; cursor: pointer;
-  padding: 3px 6px; border-radius: 4px; transition: color 0.15s, transform 0.2s; flex-shrink: 0;
-}
-.expand-btn:hover { color: var(--navy); }
-.card.open .expand-btn, .wcard.open .expand-btn { transform: rotate(180deg); }
 
 /* Walkthrough card */
 .wcard {
@@ -245,6 +267,10 @@ body {
   border-radius: 10px;
   overflow: hidden;
   transition: border-color 0.15s, box-shadow 0.15s;
+  cursor: pointer;
+  text-decoration: none;
+  display: block;
+  color: inherit;
 }
 .wcard:hover { border-color: #b8c5de; box-shadow: 0 2px 12px rgba(5,31,78,0.08); }
 .wcard.published { border-top: 3px solid var(--green); }
@@ -267,7 +293,6 @@ body {
   border-left: 2px solid #fff; border-bottom: 2px solid #fff;
   transform: rotate(-45deg) translate(1px, -1px);
 }
-.wcard .expand-btn { margin-top: 2px; }
 
 /* Pills */
 .pill { font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; padding: 2px 7px; border-radius: 100px; }
@@ -282,28 +307,6 @@ body {
 .type-pill { font-size: 10px; font-weight: 500; letter-spacing: 0.06em; text-transform: uppercase; padding: 2px 8px; border-radius: 100px; flex-shrink: 0; }
 .type-walkthrough { background: #eff6ff; color: #1d4ed8; }
 .type-feature     { background: #f5f3ff; color: #6d28d9; }
-
-/* Expansion panel */
-.card-panel {
-  border-top: 1px solid var(--border);
-  background: #f9fafc;
-  padding: 14px 16px 12px;
-}
-.panel-section { margin-bottom: 12px; }
-.panel-label { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.07em; color: var(--fg3); margin-bottom: 5px; display: block; }
-.panel-ta {
-  width: 100%; background: #fff; border: 1px solid var(--border); border-radius: 6px;
-  color: var(--fg); font-family: 'Inter', system-ui, sans-serif; font-size: 13px; line-height: 1.6;
-  padding: 9px 12px; resize: vertical; min-height: 80px; transition: border-color 0.15s;
-}
-.panel-ta:focus { outline: none; border-color: var(--navy-mid); box-shadow: 0 0 0 3px rgba(5,31,78,0.07); }
-.ta-transcript { min-height: 110px; }
-.panel-ta::placeholder { color: #b0bcd4; }
-.panel-footer { display: flex; justify-content: flex-end; margin-top: 4px; }
-.panel-status { font-size: 11px; color: var(--fg3); min-height: 16px; }
-.panel-status.saving { color: #d97706; }
-.panel-status.saved  { color: #15803d; }
-.panel-status.error  { color: #dc2626; }
 
 /* Loading / empty states */
 .loading-msg { color: var(--fg3); padding: 48px; text-align: center; font-size: 13px; }
@@ -474,6 +477,13 @@ body {
   const ROLE_ICONS = {
     'lab-client': '🧪', 'lab-company': '🏢', 'pharmacy': '💊', 'driver': '🚗', 'all': '🌐'
   };
+  const ROLE_THUMB = {
+    'lab-client':  { bg: 'linear-gradient(135deg, #3b1f72, #1a0938)', icon: '🧪' },
+    'lab-company': { bg: 'linear-gradient(135deg, #0e4a5c, #051F4E)', icon: '🏢' },
+    'pharmacy':    { bg: 'linear-gradient(135deg, #5c3a0e, #2d1a05)', icon: '💊' },
+    'driver':      { bg: 'linear-gradient(135deg, #0e4a30, #051F4E)', icon: '🚗' },
+    'all':         { bg: 'linear-gradient(135deg, #1a2f5c, #051F4E)', icon: '🌐' },
+  };
   const SECTION_ICONS = {
     'walkthroughs': '🎬', 'orders-dispatch': '📋', 'live-tracking': '📍',
     'route-builder': '🗺️', 'driver-app': '📱', 'scheduling-coverage': '📅',
@@ -484,8 +494,6 @@ body {
   let catalog = null;
   let apiData = {};     // video_id -> {transcript, team_notes, done}
   let currentFilter = 'all';
-  const saveTimers = {};
-  const focusedTas = new Set();
 
   const apiBadge = document.getElementById('api-badge');
   const doneCountEl = document.getElementById('done-count');
@@ -562,6 +570,11 @@ body {
     wireHandlers();
   }
 
+  function getThumb(roles) {
+    const role = roles && roles[0];
+    return ROLE_THUMB[role] || ROLE_THUMB['all'];
+  }
+
   function buildCard(video, api, isDone) {
     const div = document.createElement('div');
     div.className = 'card' + (isDone ? ' done' : '') + (video.status === 'published' ? ' published' : '');
@@ -569,12 +582,15 @@ body {
     div.dataset.roles = video.roles.join(' ');
     div.dataset.status = video.status;
 
+    const thumb = getThumb(video.roles);
+
     const rolePills = video.roles.map(r => {
       if (r === 'all') return `<span class="pill pill-all">All</span>`;
       return `<span class="pill pill-${r}">${r === 'lab-client' ? 'Lab Client' : r === 'lab-company' ? 'Lab Co' : r.charAt(0).toUpperCase() + r.slice(1)}</span>`;
     }).join('');
 
     div.innerHTML = `
+      <div class="card-thumb" style="background:${thumb.bg}"><span class="card-thumb-icon">${thumb.icon}</span></div>
       <div class="card-row">
         <div class="card-check"></div>
         <div class="card-body">
@@ -582,12 +598,6 @@ body {
           <div class="card-meta">${rolePills}<span class="duration">${esc(video.duration_label)}</span></div>
         </div>
         <span class="type-pill type-feature">Feature</span>
-        <button class="expand-btn" aria-label="Expand">▾</button>
-      </div>
-      <div class="card-panel" hidden>
-        <div class="panel-section"><label class="panel-label">Script / Transcript</label><textarea class="panel-ta ta-transcript" placeholder="Paste or write the narration script here…">${esc(api.transcript || '')}</textarea></div>
-        <div class="panel-section"><label class="panel-label">Team Notes</label><textarea class="panel-ta ta-notes" placeholder="Feedback, revision ideas, update requests…">${esc(api.team_notes || '')}</textarea></div>
-        <div class="panel-footer"><span class="panel-status"></span></div>
       </div>`;
     return div;
   }
@@ -595,6 +605,7 @@ body {
   function buildWcard(video, api, isDone) {
     const icon = video.roles[0] ? (ROLE_ICONS[video.roles[0]] || '🎬') : '🎬';
     const iconBg = { 'lab-client':'#3b1f72','lab-company':'#0e4a5c','pharmacy':'#5c3a0e','driver':'#0e4a30','all':'#1a2f5c' }[video.roles[0]] || '#051F4E';
+    const thumb = getThumb(video.roles);
 
     const div = document.createElement('div');
     div.className = 'wcard' + (isDone ? ' done' : '') + (video.status === 'published' ? ' published' : '');
@@ -607,6 +618,7 @@ body {
       : `<span class="status-pill status-planned">Planned</span>`;
 
     div.innerHTML = `
+      <div class="card-thumb" style="background:${thumb.bg}"><span class="card-thumb-icon">${thumb.icon}</span></div>
       <div class="wcard-row">
         <div class="wcard-check"></div>
         <div class="wcard-icon" style="background:${iconBg}">${icon}</div>
@@ -615,12 +627,6 @@ body {
           <div class="wcard-desc">${esc(video.description)}</div>
           <div class="wcard-badges">${statusBadge}<span class="duration">${esc(video.duration_label)}</span></div>
         </div>
-        <button class="expand-btn" aria-label="Expand">▾</button>
-      </div>
-      <div class="card-panel" hidden>
-        <div class="panel-section"><label class="panel-label">Script / Transcript</label><textarea class="panel-ta ta-transcript" placeholder="Paste or write the narration script here…">${esc(api.transcript || '')}</textarea></div>
-        <div class="panel-section"><label class="panel-label">Team Notes</label><textarea class="panel-ta ta-notes" placeholder="Feedback, revision ideas, update requests…">${esc(api.team_notes || '')}</textarea></div>
-        <div class="panel-footer"><span class="panel-status"></span></div>
       </div>`;
     return div;
   }
@@ -653,19 +659,14 @@ body {
   function wireHandlers() {
     document.querySelectorAll('[data-vid]').forEach(card => {
       const vid = card.dataset.vid;
-      const panel = card.querySelector('.card-panel');
       const check = card.querySelector('.card-check, .wcard-check');
-      const expandBtn = card.querySelector('.expand-btn');
 
-      if (expandBtn && panel) {
-        expandBtn.addEventListener('click', e => {
-          e.stopPropagation();
-          const open = !card.classList.contains('open');
-          card.classList.toggle('open', open);
-          panel.hidden = !open;
-        });
-      }
+      // Whole card navigates to detail page
+      card.addEventListener('click', () => {
+        window.location.href = 'video.html?id=' + encodeURIComponent(vid);
+      });
 
+      // Done checkbox toggles without navigating
       if (check) {
         check.addEventListener('click', e => {
           e.stopPropagation();
@@ -674,21 +675,6 @@ body {
           updateProgress();
           buildSidebar();
           patchApi(vid, { done: isDone });
-        });
-      }
-
-      if (panel) {
-        panel.querySelectorAll('.panel-ta').forEach(ta => {
-          ta.addEventListener('focus', () => focusedTas.add(ta));
-          ta.addEventListener('blur', () => {
-            focusedTas.delete(ta);
-            clearTimeout(saveTimers[vid]);
-            savePanelNow(vid);
-          });
-          ta.addEventListener('input', () => {
-            clearTimeout(saveTimers[vid]);
-            saveTimers[vid] = setTimeout(() => savePanelNow(vid), 1500);
-          });
         });
       }
     });
@@ -708,37 +694,6 @@ body {
       if (res.status === 401) { token = null; try { localStorage.removeItem('doit_video_token'); } catch {} showLogin(); return; }
       if (res.ok) { const j = await res.json(); apiData[vid] = j.data || j; }
     } catch {}
-  }
-
-  function setStatus(panel, cls, text) {
-    const el = panel && panel.querySelector('.panel-status');
-    if (!el) return;
-    el.className = 'panel-status' + (cls ? ' ' + cls : '');
-    el.textContent = text;
-  }
-
-  async function savePanelNow(vid) {
-    const card = document.querySelector('[data-vid="' + vid + '"]');
-    if (!card) return;
-    const panel = card.querySelector('.card-panel');
-    if (!panel) return;
-    const transcript = panel.querySelector('.ta-transcript').value;
-    const team_notes = panel.querySelector('.ta-notes').value;
-    const done = card.classList.contains('done');
-    if (!getToken()) { showLogin(); return; }
-    setStatus(panel, 'saving', 'Saving…');
-    try {
-      const res = await fetch(API_BASE + '/video_catalog_items/' + vid, {
-        method: 'PATCH',
-        headers: authHeaders(),
-        body: JSON.stringify({ data: { transcript, team_notes, done } }),
-      });
-      if (res.ok) {
-        const j = await res.json(); apiData[vid] = j.data || j;
-        setStatus(panel, 'saved', 'Saved ✓');
-        setTimeout(() => setStatus(panel, '', ''), 2000);
-      } else { throw new Error(); }
-    } catch { setStatus(panel, 'error', 'Error saving'); }
   }
 
   // ── Filters ───────────────────────────────────────────────────

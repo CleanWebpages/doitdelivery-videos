@@ -1,0 +1,1043 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>DoitDelivery — Video</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Poppins:wght@500;600;700&display=swap">
+<style>
+:root {
+  --navy:      #051F4E;
+  --navy-mid:  #0a2d6e;
+  --green:     #2ECC71;
+  --green-dim: #27ae60;
+  --content-bg: #f7f8fc;
+  --surface:    #ffffff;
+  --border:     #dde3f0;
+  --fg:         #0f1b34;
+  --fg2:        #334575;
+  --fg3:        #6b7fa8;
+  color-scheme: light;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { height: 100%; }
+body {
+  font-family: 'Inter', system-ui, sans-serif;
+  background: var(--content-bg);
+  color: var(--fg);
+  font-size: 14px;
+  line-height: 1.6;
+  display: flex;
+  flex-direction: column;
+  min-height: 100%;
+}
+
+/* ── Top nav ── */
+.topbar {
+  background: var(--navy);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 0 24px;
+  height: 52px;
+  flex-shrink: 0;
+  position: sticky;
+  top: 0;
+  z-index: 200;
+  box-shadow: 0 1px 0 rgba(255,255,255,0.08);
+}
+.topbar-logo {
+  font-family: 'Poppins', sans-serif;
+  font-size: 16px;
+  font-weight: 700;
+  color: #fff;
+  letter-spacing: -0.01em;
+  text-decoration: none;
+}
+.topbar-logo span { color: var(--green); }
+.topbar-title {
+  font-size: 13px;
+  font-weight: 500;
+  color: rgba(255,255,255,0.55);
+  margin-left: 4px;
+}
+.topbar-title::before { content: '/'; margin-right: 8px; opacity: 0.4; }
+.topbar-right { margin-left: auto; display: flex; align-items: center; gap: 10px; }
+.topbar-badge { font-size: 11px; font-weight: 600; letter-spacing: 0.04em; padding: 3px 10px; border-radius: 100px; background: rgba(46,204,113,0.15); color: var(--green); }
+.topbar-badge.loading { background: rgba(255,255,255,0.1); color: rgba(255,255,255,0.5); }
+.topbar-badge.error   { background: rgba(231,76,60,0.2); color: #e74c3c; }
+
+/* ── Breadcrumb ── */
+.breadcrumb {
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  padding: 10px 28px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  color: var(--fg3);
+  flex-shrink: 0;
+  flex-wrap: wrap;
+}
+.breadcrumb a {
+  color: var(--navy-mid);
+  text-decoration: none;
+  font-weight: 500;
+}
+.breadcrumb a:hover { color: var(--green-dim); text-decoration: underline; }
+.breadcrumb-sep { opacity: 0.4; }
+.breadcrumb-current { color: var(--fg); font-weight: 500; }
+
+/* ── Two-column layout ── */
+.video-layout {
+  flex: 1;
+  display: flex;
+  gap: 0;
+  min-height: 0;
+  align-items: flex-start;
+}
+
+.left-col {
+  width: 420px;
+  flex-shrink: 0;
+  padding: 24px 20px 40px 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  position: sticky;
+  top: 52px;
+  max-height: calc(100vh - 52px);
+  overflow-y: auto;
+}
+
+.right-col {
+  flex: 1;
+  min-width: 0;
+  padding: 24px 28px 60px 20px;
+  border-left: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+/* ── Canvas thumbnail ── */
+#thumb-canvas {
+  width: 100%;
+  height: auto;
+  border-radius: 10px;
+  display: block;
+  box-shadow: 0 4px 20px rgba(5,31,78,0.15);
+}
+
+/* ── Video player section ── */
+.video-section {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  overflow: hidden;
+}
+.video-section video {
+  width: 100%;
+  display: block;
+}
+.video-placeholder {
+  background: linear-gradient(135deg, #0e1f3d, #051F4E);
+  aspect-ratio: 16/9;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+.video-placeholder-icon { font-size: 40px; opacity: 0.4; }
+.video-placeholder-text { font-size: 13px; font-weight: 600; color: rgba(255,255,255,0.5); letter-spacing: 0.04em; }
+.video-placeholder-dur { font-size: 11px; color: rgba(255,255,255,0.3); }
+
+/* ── Metadata card ── */
+.meta-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.meta-row { display: flex; align-items: flex-start; gap: 10px; }
+.meta-label {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--fg3);
+  width: 90px;
+  flex-shrink: 0;
+  padding-top: 2px;
+}
+.meta-value { font-size: 13px; color: var(--fg); }
+.meta-pills { display: flex; gap: 5px; flex-wrap: wrap; }
+.pill { font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; padding: 2px 8px; border-radius: 100px; }
+.pill-lab-client  { background: #ede9fe; color: #5b21b6; }
+.pill-lab-company { background: #e0f2fe; color: #0369a1; }
+.pill-pharmacy    { background: #fef3c7; color: #92400e; }
+.pill-driver      { background: #dcfce7; color: #15803d; }
+.pill-all         { background: #f1f5f9; color: #475569; }
+.type-pill { font-size: 10px; font-weight: 500; letter-spacing: 0.06em; text-transform: uppercase; padding: 2px 8px; border-radius: 100px; }
+.type-walkthrough { background: #eff6ff; color: #1d4ed8; }
+.type-feature     { background: #f5f3ff; color: #6d28d9; }
+.status-pill { font-size: 10px; font-weight: 600; letter-spacing: 0.04em; padding: 2px 8px; border-radius: 100px; }
+.status-published { background: #dcfce7; color: #15803d; }
+.status-planned   { background: #f1f5f9; color: #64748b; }
+
+/* ── Right column sections ── */
+.section-block {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  overflow: hidden;
+}
+.section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 16px 12px;
+  border-bottom: 1px solid var(--border);
+}
+.section-header-title {
+  font-family: 'Poppins', sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--navy);
+}
+.save-status {
+  font-size: 11px;
+  color: var(--fg3);
+  min-height: 16px;
+  transition: color 0.2s;
+}
+.save-status.saving { color: #d97706; }
+.save-status.saved  { color: #15803d; }
+.save-status.error  { color: #dc2626; }
+
+/* ── Segment editor ── */
+.segment-list {
+  padding: 12px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.segment-card {
+  background: #f9fafc;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.segment-top {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.segment-ts {
+  width: 64px;
+  flex-shrink: 0;
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 5px 8px;
+  font-size: 12px;
+  font-family: 'Inter', monospace, sans-serif;
+  color: var(--fg);
+  font-variant-numeric: tabular-nums;
+  text-align: center;
+  outline: none;
+  transition: border-color 0.15s;
+}
+.segment-ts:focus { border-color: var(--navy-mid); box-shadow: 0 0 0 2px rgba(5,31,78,0.07); }
+.segment-name {
+  flex: 1;
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 5px 10px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--fg);
+  font-family: 'Inter', sans-serif;
+  outline: none;
+  transition: border-color 0.15s;
+}
+.segment-name:focus { border-color: var(--navy-mid); box-shadow: 0 0 0 2px rgba(5,31,78,0.07); }
+.segment-remove {
+  width: 26px;
+  height: 26px;
+  flex-shrink: 0;
+  background: none;
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  color: #94a3b8;
+  font-size: 16px;
+  line-height: 1;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s;
+  padding: 0;
+}
+.segment-remove:hover { background: #fee2e2; border-color: #fca5a5; color: #dc2626; }
+.segment-text {
+  width: 100%;
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 9px 12px;
+  font-size: 13px;
+  font-family: 'Inter', sans-serif;
+  color: var(--fg);
+  line-height: 1.6;
+  resize: vertical;
+  min-height: 72px;
+  outline: none;
+  transition: border-color 0.15s;
+}
+.segment-text:focus { border-color: var(--navy-mid); box-shadow: 0 0 0 2px rgba(5,31,78,0.07); }
+.segment-text::placeholder { color: #b0bcd4; }
+.add-segment-btn {
+  margin: 0 16px 14px;
+  background: none;
+  border: 1px dashed #c0cce0;
+  border-radius: 8px;
+  padding: 8px 12px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--fg3);
+  cursor: pointer;
+  font-family: 'Inter', sans-serif;
+  transition: all 0.15s;
+  width: calc(100% - 32px);
+  text-align: left;
+}
+.add-segment-btn:hover { border-color: var(--navy-mid); color: var(--navy); background: #f0f4fb; }
+
+/* ── Team notes ── */
+.team-notes-ta {
+  width: 100%;
+  padding: 14px 16px;
+  background: var(--surface);
+  border: none;
+  color: var(--fg);
+  font-family: 'Inter', sans-serif;
+  font-size: 13px;
+  line-height: 1.7;
+  resize: vertical;
+  min-height: 120px;
+  outline: none;
+  display: block;
+}
+.team-notes-ta::placeholder { color: #b0bcd4; }
+
+/* ── Done checkbox ── */
+.done-block {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 14px 16px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.done-block label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--fg);
+  user-select: none;
+}
+.done-block input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--green);
+  cursor: pointer;
+}
+
+/* ── Loading / error ── */
+.loading-msg { color: var(--fg3); padding: 48px; text-align: center; font-size: 13px; }
+.spinner { display: inline-block; width: 20px; height: 20px; border: 2px solid #dde3f0; border-top-color: var(--navy); border-radius: 50%; animation: spin 0.7s linear infinite; vertical-align: middle; margin-right: 8px; }
+@keyframes spin { to { transform: rotate(360deg); } }
+.not-found { color: var(--fg3); padding: 48px; text-align: center; font-size: 14px; }
+
+@media (max-width: 860px) {
+  .video-layout { flex-direction: column; }
+  .left-col {
+    width: 100%;
+    position: static;
+    max-height: none;
+    padding: 20px 16px 0;
+  }
+  .right-col {
+    border-left: none;
+    border-top: 1px solid var(--border);
+    padding: 20px 16px 60px;
+  }
+}
+</style>
+</head>
+<body>
+
+<!-- ── Top bar ── -->
+<nav class="topbar">
+  <a class="topbar-logo" href="index.html">Doit<span>Delivery</span></a>
+  <span class="topbar-title">Video Library</span>
+  <div class="topbar-right">
+    <span class="topbar-badge loading" id="api-badge">Loading…</span>
+    <button id="logout-btn" hidden style="font-size:11px;background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.2);color:rgba(255,255,255,0.6);padding:3px 10px;border-radius:6px;cursor:pointer;font-family:inherit;">Sign out</button>
+  </div>
+</nav>
+
+<!-- ── Login overlay ── -->
+<div id="login-overlay" style="display:none;position:fixed;inset:0;background:rgba(5,20,50,0.85);z-index:500;align-items:center;justify-content:center;backdrop-filter:blur(4px);">
+  <div style="background:#fff;border-radius:14px;padding:36px 32px;width:100%;max-width:360px;box-shadow:0 24px 60px rgba(0,0,0,0.3);">
+    <div style="font-family:'Poppins',sans-serif;font-size:20px;font-weight:700;color:#051F4E;margin-bottom:4px;">Doit<span style="color:#2ECC71">Delivery</span></div>
+    <div style="font-size:13px;color:#6b7fa8;margin-bottom:24px;">Sign in to access the video catalog</div>
+    <div style="margin-bottom:14px;">
+      <label style="font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.07em;color:#6b7fa8;display:block;margin-bottom:5px;">Email</label>
+      <input id="login-email" type="email" autocomplete="email" style="width:100%;border:1px solid #dde3f0;border-radius:7px;padding:9px 12px;font-size:14px;font-family:inherit;color:#0f1b34;outline:none;" placeholder="you@example.com">
+    </div>
+    <div style="margin-bottom:20px;">
+      <label style="font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.07em;color:#6b7fa8;display:block;margin-bottom:5px;">Password</label>
+      <input id="login-password" type="password" autocomplete="current-password" style="width:100%;border:1px solid #dde3f0;border-radius:7px;padding:9px 12px;font-size:14px;font-family:inherit;color:#0f1b34;outline:none;" placeholder="••••••••">
+    </div>
+    <button id="login-btn" style="width:100%;background:#2ECC71;color:#051F4E;border:none;border-radius:8px;padding:11px;font-family:'Poppins',sans-serif;font-size:14px;font-weight:700;cursor:pointer;">Sign In</button>
+    <div id="login-error" style="font-size:12px;color:#dc2626;margin-top:10px;min-height:16px;text-align:center;"></div>
+  </div>
+</div>
+
+<!-- ── Breadcrumb ── -->
+<div class="breadcrumb" id="breadcrumb">
+  <a href="index.html">← Video Library</a>
+  <span class="breadcrumb-sep">/</span>
+  <span id="bc-section">…</span>
+  <span class="breadcrumb-sep">/</span>
+  <span class="breadcrumb-current" id="bc-title">…</span>
+</div>
+
+<!-- ── Main layout ── -->
+<div class="video-layout" id="video-layout">
+  <div class="loading-msg"><span class="spinner"></span> Loading…</div>
+</div>
+
+<script>
+(async function () {
+  const API_BASE = 'https://api.doitdelivery.com/api';
+  const CATALOG_URL = 'videos.json';
+
+  // ── Auth ───────────────────────────────────────────────────────
+  let token = null;
+  try { token = localStorage.getItem('doit_video_token'); } catch {}
+
+  const overlay    = document.getElementById('login-overlay');
+  const loginBtn   = document.getElementById('login-btn');
+  const logoutBtn  = document.getElementById('logout-btn');
+  const loginError = document.getElementById('login-error');
+
+  function getToken() {
+    if (token) return token;
+    try { token = localStorage.getItem('doit_video_token'); } catch {}
+    return token || null;
+  }
+
+  function authHeaders() {
+    const t = getToken();
+    return t ? { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + t }
+             : { 'Content-Type': 'application/json' };
+  }
+
+  function showLogin() {
+    overlay.style.display = 'flex';
+    logoutBtn.hidden = true;
+  }
+  function hideLogin() {
+    overlay.style.display = 'none';
+    logoutBtn.hidden = false;
+  }
+
+  loginBtn.addEventListener('click', async () => {
+    const email    = document.getElementById('login-email').value.trim();
+    const password = document.getElementById('login-password').value;
+    loginError.textContent = '';
+    loginBtn.textContent = 'Signing in…';
+    loginBtn.disabled = true;
+    try {
+      const res = await fetch(API_BASE + '/access_tokens', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ data: { email, password } }),
+      });
+      const j = await res.json();
+      if (!res.ok) throw new Error((j.data && j.data.error) || j.error || j.message || 'Invalid credentials');
+      token = j.access_token || j.token
+           || (j.data && (j.data.access_token || j.data.token))
+           || null;
+      if (!token) throw new Error('Token not found. Response keys: ' + Object.keys(j).join(', '));
+      try { localStorage.setItem('doit_video_token', token); } catch {}
+      hideLogin();
+      initApp();
+    } catch (e) {
+      loginError.textContent = e.message || 'Sign in failed';
+    } finally {
+      loginBtn.textContent = 'Sign In';
+      loginBtn.disabled = false;
+    }
+  });
+
+  document.getElementById('login-password').addEventListener('keydown', e => {
+    if (e.key === 'Enter') loginBtn.click();
+  });
+
+  logoutBtn.addEventListener('click', () => {
+    token = null;
+    try { localStorage.removeItem('doit_video_token'); } catch {}
+    showLogin();
+  });
+
+  if (!token) { showLogin(); return; }
+  hideLogin();
+  initApp();
+
+  // ── Role config ────────────────────────────────────────────────
+  const ROLE_CONFIG = {
+    'lab-client':  { color: '#8B5CF6', label: 'Lab Client',     icon: '🧪' },
+    'lab-company': { color: '#06B6D4', label: 'Lab Company',    icon: '🏢' },
+    'pharmacy':    { color: '#F59E0B', label: 'Pharmacy Admin', icon: '💊' },
+    'driver':      { color: '#10B981', label: 'Driver App',     icon: '🚗' },
+    'all':         { color: '#4F8EF7', label: 'All Roles',      icon: '🌐' },
+  };
+
+  // ── Transcript helpers ─────────────────────────────────────────
+  function parseTranscript(text) {
+    if (!text || !text.trim()) return [];
+    const segments = [];
+    let current = null;
+    for (const line of text.split('\n')) {
+      const m = line.match(/^\[(\d+:\d+(?::\d+)?)\]\s*(.+)/);
+      if (m) {
+        if (current) { current.text = current.text.trim(); segments.push(current); }
+        current = { timestamp: m[1], name: m[2].trim(), text: '' };
+      } else if (current) {
+        current.text += (current.text ? '\n' : '') + line;
+      }
+    }
+    if (current) { current.text = current.text.trim(); segments.push(current); }
+    return segments;
+  }
+
+  function serializeTranscript(segments) {
+    return segments.map(s => `[${s.timestamp}] ${s.name}\n${s.text}`).join('\n\n');
+  }
+
+  // ── Canvas helpers ─────────────────────────────────────────────
+  function roundRectPath(ctx, x, y, w, h, r) {
+    ctx.beginPath();
+    ctx.moveTo(x + r, y);
+    ctx.lineTo(x + w - r, y);
+    ctx.arcTo(x + w, y, x + w, y + r, r);
+    ctx.lineTo(x + w, y + h - r);
+    ctx.arcTo(x + w, y + h, x + w - r, y + h, r);
+    ctx.lineTo(x + r, y + h);
+    ctx.arcTo(x, y + h, x, y + h - r, r);
+    ctx.lineTo(x, y + r);
+    ctx.arcTo(x, y, x + r, y, r);
+    ctx.closePath();
+  }
+
+  function wrapText(ctx, text, maxWidth) {
+    const words = text.split(' ');
+    const lines = [];
+    let current = '';
+    for (const word of words) {
+      const test = current ? current + ' ' + word : word;
+      if (ctx.measureText(test).width > maxWidth && current) {
+        lines.push(current);
+        current = word;
+      } else {
+        current = test;
+      }
+    }
+    if (current) lines.push(current);
+    return lines;
+  }
+
+  function drawThumbnail(canvas, video) {
+    const ctx = canvas.getContext('2d');
+    const W = 1280, H = 720;
+    canvas.width = W;
+    canvas.height = H;
+
+    const primaryRole = video.roles && video.roles[0];
+    const rc = ROLE_CONFIG[primaryRole] || ROLE_CONFIG['all'];
+    const accentColor = rc.color;
+    const roleLabel   = rc.label;
+    const roleIcon    = rc.icon;
+
+    // Background gradient
+    const bgGrad = ctx.createLinearGradient(0, 0, 0, H);
+    bgGrad.addColorStop(0, '#051F4E');
+    bgGrad.addColorStop(1, '#031440');
+    ctx.fillStyle = bgGrad;
+    ctx.fillRect(0, 0, W, H);
+
+    // Dot grid (3% opacity)
+    ctx.fillStyle = 'rgba(255,255,255,0.03)';
+    for (let x = 30; x < W; x += 44) {
+      for (let y = 30; y < H; y += 44) {
+        ctx.beginPath();
+        ctx.arc(x, y, 1.5, 0, Math.PI * 2);
+        ctx.fill();
+      }
+    }
+
+    // Right-side glow
+    const glow = ctx.createRadialGradient(W * 0.85, H * 0.5, 0, W * 0.85, H * 0.5, W * 0.55);
+    glow.addColorStop(0, accentColor + '28');
+    glow.addColorStop(1, 'transparent');
+    ctx.fillStyle = glow;
+    ctx.fillRect(0, 0, W, H);
+
+    // Green top bar (5px)
+    ctx.fillStyle = '#2ECC71';
+    ctx.fillRect(0, 0, W, 5);
+
+    // Role-colored left accent bar (6px wide, gradient fade out)
+    const leftGrad = ctx.createLinearGradient(0, 5, 0, H);
+    leftGrad.addColorStop(0, accentColor);
+    leftGrad.addColorStop(0.6, accentColor + '80');
+    leftGrad.addColorStop(1, 'transparent');
+    ctx.fillStyle = leftGrad;
+    ctx.fillRect(0, 5, 6, H - 5);
+
+    // Large role emoji (right side, 160px, 15% opacity)
+    ctx.save();
+    ctx.globalAlpha = 0.15;
+    ctx.font = '160px sans-serif';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(roleIcon, W - 180, H * 0.5 + 10);
+    ctx.restore();
+
+    // Role badge pill (top right)
+    ctx.save();
+    ctx.font = '600 14px Inter, system-ui, sans-serif';
+    ctx.textBaseline = 'middle';
+    const bText = roleLabel;
+    const bMeasure = ctx.measureText(bText).width;
+    const bW = bMeasure + 28;
+    const bH = 28;
+    const bX = W - bW - 32;
+    const bY = 22;
+    roundRectPath(ctx, bX, bY, bW, bH, 14);
+    ctx.fillStyle = accentColor + '2a';
+    ctx.fill();
+    roundRectPath(ctx, bX, bY, bW, bH, 14);
+    ctx.strokeStyle = accentColor + '60';
+    ctx.lineWidth = 1;
+    ctx.stroke();
+    ctx.fillStyle = accentColor;
+    ctx.textAlign = 'center';
+    ctx.fillText(bText, bX + bW / 2, bY + bH / 2);
+    ctx.restore();
+
+    // DoitDelivery wordmark (top left)
+    ctx.save();
+    ctx.font = '700 26px Poppins, sans-serif';
+    ctx.textBaseline = 'alphabetic';
+    ctx.textAlign = 'left';
+    const doitMetrics = ctx.measureText('Doit');
+    ctx.fillStyle = '#ffffff';
+    ctx.fillText('Doit', 32, 50);
+    ctx.fillStyle = '#2ECC71';
+    ctx.fillText('Delivery', 32 + doitMetrics.width, 50);
+    ctx.restore();
+
+    // Type label ("PLATFORM WALKTHROUGH" or "FEATURE OVERVIEW")
+    const typeText = video.type === 'walkthrough' ? 'PLATFORM WALKTHROUGH' : 'FEATURE OVERVIEW';
+    ctx.save();
+    ctx.font = '600 15px Inter, system-ui, sans-serif';
+    ctx.textBaseline = 'alphabetic';
+    ctx.textAlign = 'left';
+    ctx.fillStyle = '#2ECC71';
+    ctx.fillText(typeText, 32, 342);
+    ctx.restore();
+
+    // Green separator line (60px wide, 2px)
+    ctx.fillStyle = '#2ECC71';
+    ctx.fillRect(32, 352, 60, 2);
+
+    // Video title — word-wrapped to 62% width
+    const maxTitleW = W * 0.62;
+    const isWalkthrough = video.type === 'walkthrough';
+    const titleFontStr = isWalkthrough
+      ? '800 68px Poppins, sans-serif'
+      : '700 58px Poppins, sans-serif';
+    const lineH = isWalkthrough ? 82 : 70;
+
+    ctx.save();
+    ctx.font = titleFontStr;
+    ctx.textBaseline = 'alphabetic';
+    ctx.textAlign = 'left';
+    ctx.fillStyle = '#ffffff';
+    const titleLines = wrapText(ctx, video.title || '', maxTitleW);
+    titleLines.forEach((line, i) => {
+      ctx.fillText(line, 32, 370 + lineH + i * lineH);
+    });
+    ctx.restore();
+
+    // Duration label
+    const titleEndY = 370 + lineH + titleLines.length * lineH;
+    ctx.save();
+    ctx.font = '400 20px Inter, system-ui, sans-serif';
+    ctx.textBaseline = 'alphabetic';
+    ctx.textAlign = 'left';
+    ctx.fillStyle = 'rgba(255,255,255,0.45)';
+    ctx.fillText('⏱ ' + (video.duration_label || ''), 32, titleEndY + 28);
+    ctx.restore();
+
+    // Bottom fade gradient
+    const bottomFade = ctx.createLinearGradient(0, H - 110, 0, H);
+    bottomFade.addColorStop(0, 'transparent');
+    bottomFade.addColorStop(1, 'rgba(3,20,64,0.75)');
+    ctx.fillStyle = bottomFade;
+    ctx.fillRect(0, H - 110, W, 110);
+
+    // Footer text
+    ctx.save();
+    ctx.font = '400 15px Inter, system-ui, sans-serif';
+    ctx.textBaseline = 'alphabetic';
+    ctx.textAlign = 'left';
+    ctx.fillStyle = 'rgba(255,255,255,0.28)';
+    ctx.fillText('videos.doitdelivery.com', 32, H - 18);
+    ctx.restore();
+
+    // "✓ PUBLISHED" badge if published
+    if (video.status === 'published') {
+      ctx.save();
+      ctx.font = '700 12px Inter, system-ui, sans-serif';
+      ctx.textBaseline = 'middle';
+      const pubText = '✓ PUBLISHED';
+      const pubMeasure = ctx.measureText(pubText).width;
+      const pubW = pubMeasure + 22;
+      const pubH = 22;
+      const pubX = W - pubW - 32;
+      const pubY = H - 36;
+      roundRectPath(ctx, pubX, pubY, pubW, pubH, 11);
+      ctx.fillStyle = 'rgba(46,204,113,0.18)';
+      ctx.fill();
+      ctx.fillStyle = '#2ECC71';
+      ctx.textAlign = 'center';
+      ctx.fillText(pubText, pubX + pubW / 2, pubY + pubH / 2);
+      ctx.restore();
+    }
+  }
+
+  // ── Main app ───────────────────────────────────────────────────
+  async function initApp() {
+    const params = new URLSearchParams(window.location.search);
+    const videoId = params.get('id');
+    const layoutEl = document.getElementById('video-layout');
+
+    if (!videoId) {
+      layoutEl.innerHTML = '<div class="not-found">No video ID specified. <a href="index.html">← Back to Library</a></div>';
+      return;
+    }
+
+    // Load catalog
+    let catalog;
+    try {
+      const res = await fetch(CATALOG_URL);
+      catalog = await res.json();
+    } catch {
+      layoutEl.innerHTML = '<div class="not-found">Could not load videos.json.</div>';
+      return;
+    }
+
+    // Find video in catalog
+    let video = null;
+    let sectionTitle = '';
+    for (const sec of catalog.sections) {
+      const found = sec.videos.find(v => v.id === videoId);
+      if (found) { video = found; sectionTitle = sec.title; break; }
+    }
+
+    if (!video) {
+      layoutEl.innerHTML = `<div class="not-found">Video "${esc(videoId)}" not found. <a href="index.html">← Back to Library</a></div>`;
+      return;
+    }
+
+    // Update page title and breadcrumb
+    document.title = video.title + ' — DoitDelivery';
+    document.getElementById('bc-section').textContent = sectionTitle;
+    document.getElementById('bc-title').textContent = video.title;
+
+    // Load API data
+    const apiBadge = document.getElementById('api-badge');
+    let apiItem = {};
+    try {
+      const res = await fetch(API_BASE + '/video_catalog_items/' + encodeURIComponent(videoId), {
+        headers: { 'Authorization': 'Bearer ' + token },
+      });
+      if (res.status === 401) {
+        token = null;
+        try { localStorage.removeItem('doit_video_token'); } catch {}
+        showLogin();
+        return;
+      }
+      if (res.ok) {
+        const j = await res.json();
+        apiItem = j.data || j;
+        apiBadge.textContent = '● API Connected';
+        apiBadge.className = 'topbar-badge';
+      } else { throw new Error('non-ok'); }
+    } catch {
+      apiBadge.textContent = 'API Offline';
+      apiBadge.className = 'topbar-badge error';
+    }
+
+    // Build layout HTML
+    layoutEl.innerHTML = '';
+
+    // ── Left column ──
+    const leftCol = document.createElement('div');
+    leftCol.className = 'left-col';
+
+    // Canvas thumbnail
+    const canvas = document.createElement('canvas');
+    canvas.id = 'thumb-canvas';
+    leftCol.appendChild(canvas);
+
+    // Video player or placeholder
+    const videoSection = document.createElement('div');
+    videoSection.className = 'video-section';
+    if (video.video_url && video.video_url.trim()) {
+      const vid = document.createElement('video');
+      vid.src = video.video_url;
+      vid.controls = true;
+      vid.preload = 'metadata';
+      videoSection.appendChild(vid);
+    } else {
+      videoSection.innerHTML = `
+        <div class="video-placeholder">
+          <div class="video-placeholder-icon">▶</div>
+          <div class="video-placeholder-text">Video Coming Soon</div>
+          <div class="video-placeholder-dur">${esc(video.duration_label)}</div>
+        </div>`;
+    }
+    leftCol.appendChild(videoSection);
+
+    // Metadata card
+    const rolePills = video.roles.map(r => {
+      const label = r === 'lab-client' ? 'Lab Client' : r === 'lab-company' ? 'Lab Co' : r.charAt(0).toUpperCase() + r.slice(1);
+      return `<span class="pill pill-${r}">${label}</span>`;
+    }).join('');
+    const typePill = video.type === 'walkthrough'
+      ? `<span class="type-pill type-walkthrough">Walkthrough</span>`
+      : `<span class="type-pill type-feature">Feature</span>`;
+    const statusPill = video.status === 'published'
+      ? `<span class="status-pill status-published">✓ Published</span>`
+      : `<span class="status-pill status-planned">Planned</span>`;
+
+    let updatedStr = '';
+    if (apiItem.updated_at) {
+      try {
+        const d = new Date(apiItem.updated_at);
+        updatedStr = d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+        if (apiItem.updated_by) updatedStr += ' by ' + apiItem.updated_by;
+      } catch {}
+    }
+
+    const metaCard = document.createElement('div');
+    metaCard.className = 'meta-card';
+    metaCard.innerHTML = `
+      <div class="meta-row"><span class="meta-label">Duration</span><span class="meta-value">${esc(video.duration_label)}</span></div>
+      <div class="meta-row"><span class="meta-label">Roles</span><div class="meta-pills">${rolePills}</div></div>
+      <div class="meta-row"><span class="meta-label">Type</span><span class="meta-value">${typePill}</span></div>
+      <div class="meta-row"><span class="meta-label">Section</span><span class="meta-value" style="font-size:12px;color:var(--fg3)">${esc(sectionTitle)}</span></div>
+      <div class="meta-row"><span class="meta-label">Status</span><span class="meta-value">${statusPill}</span></div>
+      ${updatedStr ? `<div class="meta-row"><span class="meta-label">Updated</span><span class="meta-value" style="font-size:12px;color:var(--fg3)">${esc(updatedStr)}</span></div>` : ''}`;
+    leftCol.appendChild(metaCard);
+    layoutEl.appendChild(leftCol);
+
+    // ── Right column ──
+    const rightCol = document.createElement('div');
+    rightCol.className = 'right-col';
+
+    // Auto-save state
+    let saveTimer = null;
+    const saveStatusEl = document.createElement('span');
+    saveStatusEl.className = 'save-status';
+
+    function setSaveStatus(cls, text) {
+      saveStatusEl.className = 'save-status' + (cls ? ' ' + cls : '');
+      saveStatusEl.textContent = text;
+    }
+
+    function scheduleAutoSave() {
+      clearTimeout(saveTimer);
+      saveTimer = setTimeout(saveAll, 2000);
+    }
+
+    async function saveAll() {
+      if (!getToken()) { showLogin(); return; }
+      const segments = collectSegments();
+      const transcript = serializeTranscript(segments);
+      const team_notes = teamNotesEl.value;
+      const done = doneCheck.checked;
+      setSaveStatus('saving', 'Saving…');
+      try {
+        const res = await fetch(API_BASE + '/video_catalog_items/' + encodeURIComponent(videoId), {
+          method: 'PATCH',
+          headers: authHeaders(),
+          body: JSON.stringify({ data: { transcript, team_notes, done } }),
+        });
+        if (res.status === 401) {
+          token = null;
+          try { localStorage.removeItem('doit_video_token'); } catch {}
+          showLogin();
+          return;
+        }
+        if (res.ok) {
+          const j = await res.json();
+          Object.assign(apiItem, j.data || j);
+          setSaveStatus('saved', 'Saved ✓');
+          setTimeout(() => setSaveStatus('', ''), 2000);
+        } else { throw new Error(); }
+      } catch { setSaveStatus('error', 'Error saving'); }
+    }
+
+    // ── Transcript section ──
+    const transcriptBlock = document.createElement('div');
+    transcriptBlock.className = 'section-block';
+
+    const transcriptHeader = document.createElement('div');
+    transcriptHeader.className = 'section-header';
+    transcriptHeader.innerHTML = '<span class="section-header-title">Transcript</span>';
+    transcriptHeader.appendChild(saveStatusEl);
+    transcriptBlock.appendChild(transcriptHeader);
+
+    const segmentList = document.createElement('div');
+    segmentList.className = 'segment-list';
+    transcriptBlock.appendChild(segmentList);
+
+    const addSegBtn = document.createElement('button');
+    addSegBtn.className = 'add-segment-btn';
+    addSegBtn.textContent = '＋ Add Segment';
+    transcriptBlock.appendChild(addSegBtn);
+
+    // Parse stored transcript or start with one blank segment
+    let segments = parseTranscript(apiItem.transcript || '');
+    if (segments.length === 0) {
+      segments = [{ timestamp: '0:00', name: '', text: '' }];
+    }
+
+    function renderSegments() {
+      segmentList.innerHTML = '';
+      segments.forEach((seg, idx) => {
+        const card = document.createElement('div');
+        card.className = 'segment-card';
+        card.innerHTML = `
+          <div class="segment-top">
+            <input class="segment-ts" type="text" value="${esc(seg.timestamp)}" placeholder="0:00" aria-label="Timestamp">
+            <input class="segment-name" type="text" value="${esc(seg.name)}" placeholder="Segment name" aria-label="Segment name">
+            <button class="segment-remove" aria-label="Remove segment">&times;</button>
+          </div>
+          <textarea class="segment-text" placeholder="Narration text…">${esc(seg.text)}</textarea>`;
+
+        const tsInput   = card.querySelector('.segment-ts');
+        const nameInput = card.querySelector('.segment-name');
+        const textArea  = card.querySelector('.segment-text');
+        const removeBtn = card.querySelector('.segment-remove');
+
+        tsInput.addEventListener('input', () => { segments[idx].timestamp = tsInput.value; scheduleAutoSave(); });
+        nameInput.addEventListener('input', () => { segments[idx].name = nameInput.value; scheduleAutoSave(); });
+        textArea.addEventListener('input', () => { segments[idx].text = textArea.value; scheduleAutoSave(); });
+        removeBtn.addEventListener('click', () => {
+          segments.splice(idx, 1);
+          renderSegments();
+          scheduleAutoSave();
+        });
+
+        segmentList.appendChild(card);
+      });
+    }
+
+    function collectSegments() {
+      // Re-read from DOM to capture any direct edits
+      const cards = segmentList.querySelectorAll('.segment-card');
+      return Array.from(cards).map(card => ({
+        timestamp: card.querySelector('.segment-ts').value,
+        name: card.querySelector('.segment-name').value,
+        text: card.querySelector('.segment-text').value,
+      }));
+    }
+
+    addSegBtn.addEventListener('click', () => {
+      segments = collectSegments();
+      segments.push({ timestamp: '0:00', name: '', text: '' });
+      renderSegments();
+      // Focus the new segment name input
+      const cards = segmentList.querySelectorAll('.segment-card');
+      const lastCard = cards[cards.length - 1];
+      if (lastCard) lastCard.querySelector('.segment-name').focus();
+      scheduleAutoSave();
+    });
+
+    renderSegments();
+    rightCol.appendChild(transcriptBlock);
+
+    // ── Team Notes section ──
+    const teamNotesBlock = document.createElement('div');
+    teamNotesBlock.className = 'section-block';
+    teamNotesBlock.innerHTML = `
+      <div class="section-header">
+        <span class="section-header-title">Team Notes</span>
+      </div>`;
+
+    const teamNotesEl = document.createElement('textarea');
+    teamNotesEl.className = 'team-notes-ta';
+    teamNotesEl.placeholder = 'Feedback, revision ideas, update requests…';
+    teamNotesEl.value = apiItem.team_notes || '';
+    teamNotesEl.addEventListener('input', scheduleAutoSave);
+    teamNotesBlock.appendChild(teamNotesEl);
+    rightCol.appendChild(teamNotesBlock);
+
+    // ── Done checkbox ──
+    const doneBlock = document.createElement('div');
+    doneBlock.className = 'done-block';
+    doneBlock.innerHTML = `<label><input type="checkbox" id="done-check"${apiItem.done ? ' checked' : ''}> Mark complete</label>`;
+    const doneCheck = doneBlock.querySelector('#done-check');
+    doneCheck.addEventListener('change', saveAll);
+    rightCol.appendChild(doneBlock);
+
+    layoutEl.appendChild(rightCol);
+
+    // ── Draw canvas thumbnail (after fonts load) ──
+    await document.fonts.ready;
+    drawThumbnail(canvas, video);
+  }
+
+  function esc(str) {
+    return String(str || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+
+})();
+</script>
+</body>
+</html>
