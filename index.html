@@ -439,8 +439,11 @@ body {
       });
       const j = await res.json();
       if (!res.ok) throw new Error((j.data && j.data.error) || j.error || j.message || 'Invalid credentials');
-      token = (j.data && j.data.access_token) || j.access_token || null;
-      if (!token) throw new Error('No access token in response');
+      // try every plausible location the API might return the token
+      token = j.access_token || j.token
+           || (j.data && (j.data.access_token || j.data.token))
+           || null;
+      if (!token) throw new Error('Token not found. Response keys: ' + Object.keys(j).join(', '));
       try { localStorage.setItem('doit_video_token', token); } catch {}
       hideLogin();
       initApp();
