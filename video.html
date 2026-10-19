@@ -998,7 +998,6 @@ body {
           segmentList.querySelectorAll('.segment-card.dirty').forEach(c => c.classList.remove('dirty'));
           setSaveStatus('saved', 'Saved ✓');
           const returnedSegs = (j.data || j).transcript_segments;
-          console.log('[debug] full seg0:', JSON.stringify(returnedSegs && returnedSegs[0]));
           if (Array.isArray(returnedSegs)) {
             segments.forEach((seg, i) => {
               if (returnedSegs[i]) {
