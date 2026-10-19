@@ -154,6 +154,45 @@ body {
 .video-placeholder-icon { font-size: 40px; opacity: 0.4; }
 .video-placeholder-text { font-size: 13px; font-weight: 600; color: rgba(255,255,255,0.5); letter-spacing: 0.04em; }
 .video-placeholder-dur { font-size: 11px; color: rgba(255,255,255,0.3); }
+.video-upload-btn {
+  margin-top: 14px;
+  background: rgba(46,204,113,0.18);
+  border: 1px solid rgba(46,204,113,0.4);
+  color: #2ecc71;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  padding: 7px 18px;
+  border-radius: 100px;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+.video-upload-btn:hover { background: rgba(46,204,113,0.28); }
+.video-upload-btn:disabled { opacity: 0.4; cursor: default; }
+.upload-progress {
+  margin-top: 14px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  width: 160px;
+}
+.upload-bar {
+  width: 100%;
+  height: 4px;
+  background: rgba(255,255,255,0.12);
+  border-radius: 2px;
+  overflow: hidden;
+}
+.upload-fill {
+  height: 100%;
+  width: 0%;
+  background: var(--green);
+  border-radius: 2px;
+  transition: width 0.1s linear;
+}
+.upload-pct { font-size: 11px; color: rgba(255,255,255,0.4); }
+.upload-status { font-size: 12px; color: rgba(255,255,255,0.5); margin-top: 4px; }
 
 /* ── Metadata card ── */
 .meta-card {
@@ -807,6 +846,98 @@ body {
   // Frontend will then send JSON instead of the text format.
   const USE_SEGMENTS_API = true;
 
+  // ── Video upload ───────────────────────────────────────────────
+  async function uploadVideo(file, videoId, onSuccess) {
+    const uploadBtn   = document.getElementById('upload-btn');
+    const progressEl  = document.getElementById('upload-progress');
+    const fillEl      = document.getElementById('upload-fill');
+    const pctEl       = document.getElementById('upload-pct');
+    const statusEl    = document.getElementById('upload-status');
+
+    function setStatus(msg) { if (statusEl) statusEl.textContent = msg; }
+    function setProgress(pct) {
+      if (fillEl) fillEl.style.width = pct + '%';
+      if (pctEl)  pctEl.textContent  = pct + '%';
+    }
+
+    if (uploadBtn)  uploadBtn.disabled = true;
+    if (progressEl) progressEl.hidden  = false;
+    setStatus('Requesting upload URL…');
+    setProgress(0);
+
+    try {
+      // Step 1 — get presigned PUT URL
+      const presignRes = await fetch(API_BASE + '/files/presigned_url', {
+        method: 'POST',
+        headers: { 'Authorization': 'Bearer ' + token, 'Content-Type': 'application/json' },
+        body: JSON.stringify({ data: {
+          filename:     file.name,
+          content_type: file.type || 'video/mp4',
+          file_size:    file.size,
+          folder:       'documents',
+        }}),
+      });
+      if (!presignRes.ok) {
+        const j = await presignRes.json().catch(() => ({}));
+        throw new Error((j.errors || []).join(', ') || 'Presign failed (' + presignRes.status + ')');
+      }
+      const presignData = (await presignRes.json());
+      const { file_id: fileId, object_key: objectKey, upload_url: uploadUrl } =
+        presignData.data || presignData;
+
+      // Step 2 — upload directly to S3 with XHR for progress
+      setStatus('Uploading…');
+      await new Promise((resolve, reject) => {
+        const xhr = new XMLHttpRequest();
+        xhr.open('PUT', uploadUrl);
+        xhr.setRequestHeader('Content-Type', file.type || 'video/mp4');
+        xhr.setRequestHeader('x-amz-server-side-encryption', 'aws:kms');
+        xhr.upload.onprogress = (e) => {
+          if (e.lengthComputable) setProgress(Math.round(e.loaded / e.total * 90));
+        };
+        xhr.onload  = () => xhr.status >= 200 && xhr.status < 300 ? resolve() : reject(new Error('S3 upload failed (' + xhr.status + ')'));
+        xhr.onerror = () => reject(new Error('Network error during upload'));
+        xhr.send(file);
+      });
+      setProgress(92);
+
+      // Step 3 — confirm upload
+      setStatus('Confirming…');
+      const confirmRes = await fetch(API_BASE + '/files/confirm_upload', {
+        method: 'POST',
+        headers: { 'Authorization': 'Bearer ' + token, 'Content-Type': 'application/json' },
+        body: JSON.stringify({ data: { object_key: objectKey } }),
+      });
+      if (!confirmRes.ok) throw new Error('Confirm failed');
+      setProgress(96);
+
+      // Step 4 — save file_id to the catalog item
+      setStatus('Saving…');
+      await fetch(API_BASE + '/video_catalog_items/' + encodeURIComponent(videoId), {
+        method: 'PATCH',
+        headers: { 'Authorization': 'Bearer ' + token, 'Content-Type': 'application/json' },
+        body: JSON.stringify({ data: { video_file_id: fileId } }),
+      });
+      setProgress(98);
+
+      // Step 5 — get playback URL
+      setStatus('Almost done…');
+      const dlRes = await fetch(API_BASE + '/files/' + fileId + '/download', {
+        headers: { 'Authorization': 'Bearer ' + token },
+      });
+      if (!dlRes.ok) throw new Error('Could not get playback URL');
+      const dlData = (await dlRes.json());
+      const playbackUrl = (dlData.data || dlData).download_url;
+      setProgress(100);
+
+      onSuccess(playbackUrl);
+    } catch (err) {
+      setStatus('Upload failed: ' + err.message);
+      if (uploadBtn)  uploadBtn.disabled  = false;
+      if (progressEl) progressEl.hidden   = true;
+    }
+  }
+
   // ── Main app ───────────────────────────────────────────────────
   async function initApp() {
     const params = new URLSearchParams(window.location.search);
@@ -885,20 +1016,59 @@ body {
     // Video player or placeholder
     const videoSection = document.createElement('div');
     videoSection.className = 'video-section';
-    if (video.video_url && video.video_url.trim()) {
+    videoSection.id = 'video-section';
+
+    // If a file was uploaded, get a fresh presigned download URL
+    let playbackUrl = video.video_url || '';
+    if (apiItem.video_file_id) {
+      try {
+        const dlRes = await fetch(API_BASE + '/files/' + apiItem.video_file_id + '/download', {
+          headers: { 'Authorization': 'Bearer ' + token },
+        });
+        if (dlRes.ok) {
+          const dlJson = await dlRes.json();
+          playbackUrl = (dlJson.data || dlJson).download_url || '';
+        }
+      } catch {}
+    }
+
+    function showVideoPlayer(src) {
       const vid = document.createElement('video');
-      vid.src = video.video_url;
+      vid.src = src;
       vid.controls = true;
       vid.preload = 'metadata';
+      videoSection.innerHTML = '';
       videoSection.appendChild(vid);
+    }
+
+    if (playbackUrl) {
+      showVideoPlayer(playbackUrl);
     } else {
       videoSection.innerHTML = `
-        <div class="video-placeholder">
+        <div class="video-placeholder" id="video-placeholder">
           <div class="video-placeholder-icon">▶</div>
           <div class="video-placeholder-text">Video Coming Soon</div>
           <div class="video-placeholder-dur">${esc(video.duration_label)}</div>
+          ${token ? '<button class="video-upload-btn" id="upload-btn">↑ Upload Video</button>' : ''}
+          <div class="upload-progress" id="upload-progress" hidden>
+            <div class="upload-bar"><div class="upload-fill" id="upload-fill"></div></div>
+            <div class="upload-pct" id="upload-pct">0%</div>
+          </div>
+          <div class="upload-status" id="upload-status"></div>
+          <input type="file" id="video-file-input" accept="video/mp4,video/quicktime,.mp4,.mov" style="display:none">
         </div>`;
+
+      const uploadBtn = document.getElementById('upload-btn');
+      if (uploadBtn) {
+        const fileInput = document.getElementById('video-file-input');
+        uploadBtn.addEventListener('click', () => fileInput.click());
+        fileInput.addEventListener('change', () => {
+          const file = fileInput.files[0];
+          if (file) uploadVideo(file, videoId, showVideoPlayer);
+        });
+      }
     }
+
     leftCol.appendChild(videoSection);
 
     // Metadata card
