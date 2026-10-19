@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>DoitDelivery Help — Video Library</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Poppins:wght@500;600;700;800&display=swap">
+<style>
+:root {
+  --navy:    #051F4E;
+  --navy2:   #0a2d6e;
+  --green:   #2ECC71;
+  --green2:  #27ae60;
+  --bg:      #f7f8fc;
+  --surface: #ffffff;
+  --border:  #dde3f0;
+  --fg:      #0f1b34;
+  --fg2:     #334575;
+  --fg3:     #6b7fa8;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body { background: var(--bg); color: var(--fg); font-family: 'Inter', system-ui, sans-serif; font-size: 15px; line-height: 1.6; }
+
+/* ── Nav ── */
+nav {
+  background: var(--navy); color: #fff; height: 52px;
+  display: flex; align-items: center; padding: 0 32px; gap: 12px;
+  position: sticky; top: 0; z-index: 100;
+}
+.nav-logo { font-family: 'Poppins', sans-serif; font-size: 16px; font-weight: 700; color: #fff; text-decoration: none; }
+.nav-logo span { color: var(--green); }
+nav a { font-size: 13px; color: rgba(255,255,255,0.6); text-decoration: none; margin-left: 20px; transition: color 0.15s; }
+nav a:hover { color: #fff; }
+.nav-right { margin-left: auto; }
+
+/* ── Hero ── */
+.hero {
+  background: linear-gradient(135deg, var(--navy) 0%, var(--navy2) 100%);
+  color: #fff;
+  padding: 64px 32px 56px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+.hero::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: radial-gradient(circle at 70% 50%, rgba(46,204,113,0.12) 0%, transparent 60%);
+}
+.hero-eyebrow { font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.12em; color: var(--green); margin-bottom: 14px; }
+.hero h1 { font-family: 'Poppins', sans-serif; font-size: 44px; font-weight: 800; letter-spacing: -0.03em; line-height: 1.1; margin-bottom: 16px; position: relative; }
+.hero p { font-size: 17px; color: rgba(255,255,255,0.7); max-width: 560px; margin: 0 auto 28px; line-height: 1.6; position: relative; }
+.hero-cta {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: var(--green); color: var(--navy); font-family: 'Poppins', sans-serif;
+  font-size: 14px; font-weight: 700; padding: 12px 28px; border-radius: 8px;
+  text-decoration: none; transition: background 0.15s; position: relative;
+}
+.hero-cta:hover { background: #27ae60; }
+.hero-stats { display: flex; justify-content: center; gap: 40px; margin-top: 40px; padding-top: 32px; border-top: 1px solid rgba(255,255,255,0.1); position: relative; }
+.hstat { text-align: center; }
+.hstat-n { font-family: 'Poppins', sans-serif; font-size: 32px; font-weight: 800; color: var(--green); line-height: 1; }
+.hstat-l { font-size: 12px; color: rgba(255,255,255,0.5); margin-top: 4px; text-transform: uppercase; letter-spacing: 0.07em; }
+
+/* ── Main ── */
+.main { max-width: 1100px; margin: 0 auto; padding: 48px 32px 80px; }
+
+/* ── Roles section ── */
+.roles-section { margin-bottom: 52px; }
+.section-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: var(--fg3); margin-bottom: 16px; }
+.roles-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 12px; }
+.role-card {
+  background: var(--surface); border: 1px solid var(--border); border-radius: 12px;
+  padding: 20px; text-decoration: none; transition: all 0.15s; display: block;
+}
+.role-card:hover { border-color: var(--navy); box-shadow: 0 4px 16px rgba(5,31,78,0.1); transform: translateY(-1px); }
+.role-icon { font-size: 28px; margin-bottom: 10px; }
+.role-name { font-family: 'Poppins', sans-serif; font-size: 14px; font-weight: 600; color: var(--fg); margin-bottom: 4px; }
+.role-desc { font-size: 12px; color: var(--fg3); line-height: 1.4; margin-bottom: 10px; }
+.role-count { font-size: 11px; font-weight: 600; color: var(--green2); }
+.role-card-bar { height: 3px; border-radius: 2px; margin-top: 12px; }
+
+/* ── Categories section ── */
+.cats-section { margin-bottom: 52px; }
+.cats-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 10px; }
+.cat-card {
+  background: var(--surface); border: 1px solid var(--border); border-radius: 10px;
+  padding: 16px; display: flex; align-items: center; gap: 12px;
+  text-decoration: none; transition: all 0.15s;
+}
+.cat-card:hover { border-color: #b8c5de; box-shadow: 0 2px 8px rgba(5,31,78,0.06); }
+.cat-icon { font-size: 22px; flex-shrink: 0; }
+.cat-info { min-width: 0; }
+.cat-name { font-size: 13px; font-weight: 600; color: var(--fg); line-height: 1.3; }
+.cat-count { font-size: 11px; color: var(--fg3); margin-top: 2px; }
+
+/* ── Featured ── */
+.featured-section { margin-bottom: 52px; }
+.section-head { font-family: 'Poppins', sans-serif; font-size: 18px; font-weight: 700; color: var(--fg); margin-bottom: 16px; display: flex; align-items: center; gap: 10px; }
+.section-head a { font-size: 13px; font-weight: 500; color: var(--green2); text-decoration: none; margin-left: auto; }
+.featured-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 14px; }
+.video-card {
+  background: var(--surface); border: 1px solid var(--border); border-radius: 10px;
+  overflow: hidden; text-decoration: none; transition: all 0.15s; display: block;
+}
+.video-card:hover { border-color: #b8c5de; box-shadow: 0 4px 12px rgba(5,31,78,0.08); }
+.video-thumb {
+  background: linear-gradient(135deg, var(--navy) 0%, #0a2d6e 100%);
+  height: 160px; position: relative; display: flex; align-items: center; justify-content: center;
+}
+.video-thumb-icon { font-size: 48px; opacity: 0.8; }
+.video-play {
+  position: absolute; width: 44px; height: 44px; background: rgba(46,204,113,0.9);
+  border-radius: 50%; display: flex; align-items: center; justify-content: center;
+  font-size: 16px; color: var(--navy);
+}
+.video-thumb-bar { position: absolute; bottom: 0; left: 0; right: 0; height: 3px; background: var(--green); }
+.video-body { padding: 14px; }
+.video-title { font-family: 'Poppins', sans-serif; font-size: 14px; font-weight: 600; color: var(--fg); margin-bottom: 4px; }
+.video-meta { display: flex; gap: 8px; align-items: center; }
+.video-pill { font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; padding: 2px 7px; border-radius: 100px; }
+.vp-lab-client  { background: #ede9fe; color: #5b21b6; }
+.vp-lab-company { background: #e0f2fe; color: #0369a1; }
+.vp-pharmacy    { background: #fef3c7; color: #92400e; }
+.vp-driver      { background: #dcfce7; color: #15803d; }
+.video-dur { font-size: 11px; color: var(--fg3); margin-left: auto; }
+
+/* ── CTA ── */
+.cta-section {
+  background: linear-gradient(135deg, var(--navy) 0%, var(--navy2) 100%);
+  border-radius: 16px; padding: 40px 40px; color: #fff; text-align: center;
+}
+.cta-section h2 { font-family: 'Poppins', sans-serif; font-size: 24px; font-weight: 700; margin-bottom: 10px; }
+.cta-section p { color: rgba(255,255,255,0.65); margin-bottom: 24px; font-size: 15px; }
+.cta-btn {
+  display: inline-block; background: var(--green); color: var(--navy); font-family: 'Poppins', sans-serif;
+  font-size: 14px; font-weight: 700; padding: 12px 32px; border-radius: 8px; text-decoration: none;
+}
+
+@media (max-width: 640px) {
+  .hero { padding: 40px 20px 36px; }
+  .hero h1 { font-size: 30px; }
+  .main { padding: 32px 20px 60px; }
+  .hero-stats { gap: 24px; }
+  .hstat-n { font-size: 24px; }
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <a class="nav-logo" href="https://docs.doitdelivery.com">Doit<span>Delivery</span></a>
+  <a href="https://docs.doitdelivery.com">Docs</a>
+  <a href="https://developer.doitdelivery.com">API</a>
+  <a href="https://videos.doitdelivery.com" style="color:#2ECC71">Videos</a>
+  <div class="nav-right"></div>
+</nav>
+
+<!-- ── Hero ── -->
+<div class="hero">
+  <div class="hero-eyebrow">Help Center</div>
+  <h1>Video Library</h1>
+  <p>Step-by-step tutorials and feature walkthroughs for every DoitDelivery user role — drivers, dispatchers, lab staff, and admins.</p>
+  <a class="hero-cta" href="index.html">Browse All Videos →</a>
+  <div class="hero-stats">
+    <div class="hstat"><div class="hstat-n">42</div><div class="hstat-l">Total Videos</div></div>
+    <div class="hstat"><div class="hstat-n">5</div><div class="hstat-l">Walkthroughs</div></div>
+    <div class="hstat"><div class="hstat-n">37</div><div class="hstat-l">Feature Guides</div></div>
+    <div class="hstat"><div class="hstat-n">~65 min</div><div class="hstat-l">Total Runtime</div></div>
+  </div>
+</div>
+
+<div class="main">
+
+  <!-- ── Browse by role ── -->
+  <div class="roles-section">
+    <div class="section-label">Browse by Role</div>
+    <div class="roles-grid">
+      <a class="role-card" href="index.html?filter=lab-client">
+        <div class="role-icon">🧪</div>
+        <div class="role-name">Lab Client</div>
+        <div class="role-desc">Clinic staff placing pickup requests, tracking specimens, and reviewing invoices.</div>
+        <div class="role-count">8 videos</div>
+        <div class="role-card-bar" style="background:linear-gradient(90deg,#8B5CF6,#a78bfa)"></div>
+      </a>
+      <a class="role-card" href="index.html?filter=lab-company">
+        <div class="role-icon">🏢</div>
+        <div class="role-name">Lab Company Admin</div>
+        <div class="role-desc">Lab operations managers dispatching drivers, managing clients, and reviewing analytics.</div>
+        <div class="role-count">24 videos</div>
+        <div class="role-card-bar" style="background:linear-gradient(90deg,#06B6D4,#67e8f9)"></div>
+      </a>
+      <a class="role-card" href="index.html?filter=pharmacy">
+        <div class="role-icon">💊</div>
+        <div class="role-name">Pharmacy Admin</div>
+        <div class="role-desc">Pharmacy dispatchers creating orders, building routes, and managing deliveries.</div>
+        <div class="role-count">18 videos</div>
+        <div class="role-card-bar" style="background:linear-gradient(90deg,#F59E0B,#fcd34d)"></div>
+      </a>
+      <a class="role-card" href="index.html?filter=driver">
+        <div class="role-icon">🚗</div>
+        <div class="role-name">Driver App</div>
+        <div class="role-desc">Delivery drivers navigating routes, verifying pickups, and completing stops.</div>
+        <div class="role-count">9 videos</div>
+        <div class="role-card-bar" style="background:linear-gradient(90deg,#10B981,#6ee7b7)"></div>
+      </a>
+    </div>
+  </div>
+
+  <!-- ── Featured (published) ── -->
+  <div class="featured-section">
+    <div class="section-head">
+      Published Videos
+      <a href="index.html?filter=published">See all →</a>
+    </div>
+    <div class="featured-grid">
+      <a class="video-card" href="index.html">
+        <div class="video-thumb" style="background:linear-gradient(135deg,#3b1f72,#1a0938)">
+          <div class="video-thumb-icon">🧪</div>
+          <div class="video-play">▶</div>
+          <div class="video-thumb-bar"></div>
+        </div>
+        <div class="video-body">
+          <div class="video-title">Lab Client Portal Walkthrough</div>
+          <div class="video-meta">
+            <span class="video-pill vp-lab-client">Lab Client</span>
+            <span class="video-dur">2:43</span>
+          </div>
+        </div>
+      </a>
+    </div>
+    <p style="font-size:13px;color:var(--fg3);margin-top:12px;">More videos publishing soon — <a href="index.html" style="color:var(--green2)">preview the full catalog</a>.</p>
+  </div>
+
+  <!-- ── Browse by topic ── -->
+  <div class="cats-section">
+    <div class="section-label">Browse by Topic</div>
+    <div class="cats-grid">
+      <a class="cat-card" href="index.html"><span class="cat-icon">📋</span><div class="cat-info"><div class="cat-name">Orders &amp; Dispatch</div><div class="cat-count">7 videos</div></div></a>
+      <a class="cat-card" href="index.html"><span class="cat-icon">📍</span><div class="cat-info"><div class="cat-name">Live Tracking</div><div class="cat-count">3 videos</div></div></a>
+      <a class="cat-card" href="index.html"><span class="cat-icon">🗺️</span><div class="cat-info"><div class="cat-name">Route Builder</div><div class="cat-count">3 videos</div></div></a>
+      <a class="cat-card" href="index.html"><span class="cat-icon">📱</span><div class="cat-info"><div class="cat-name">Driver App</div><div class="cat-count">6 videos</div></div></a>
+      <a class="cat-card" href="index.html"><span class="cat-icon">📅</span><div class="cat-info"><div class="cat-name">Scheduling &amp; Coverage</div><div class="cat-count">3 videos</div></div></a>
+      <a class="cat-card" href="index.html"><span class="cat-icon">🔔</span><div class="cat-info"><div class="cat-name">Notifications &amp; Alerts</div><div class="cat-count">3 videos</div></div></a>
+      <a class="cat-card" href="index.html"><span class="cat-icon">💰</span><div class="cat-info"><div class="cat-name">Billing &amp; Finance</div><div class="cat-count">5 videos</div></div></a>
+      <a class="cat-card" href="index.html"><span class="cat-icon">📊</span><div class="cat-info"><div class="cat-name">Reports &amp; Audit</div><div class="cat-count">3 videos</div></div></a>
+      <a class="cat-card" href="index.html"><span class="cat-icon">👥</span><div class="cat-info"><div class="cat-name">Client &amp; User Mgmt</div><div class="cat-count">3 videos</div></div></a>
+    </div>
+  </div>
+
+  <!-- ── CTA ── -->
+  <div class="cta-section">
+    <h2>Ready to explore?</h2>
+    <p>Browse the full interactive catalog with transcripts and notes for every video.</p>
+    <a class="cta-btn" href="index.html">Open Video Catalog →</a>
+  </div>
+
+</div>
+</body>
+</html>

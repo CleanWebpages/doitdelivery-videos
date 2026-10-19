@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>DoitDelivery Thumbnail Generator</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700;800&family=Inter:wght@400;500;600&display=swap">
+<style>
+* { box-sizing: border-box; margin: 0; }
+body { background: #0a0f1a; color: #e4e8f0; font-family: 'Inter', sans-serif; padding: 24px; }
+h1 { font-family: 'Poppins', sans-serif; font-size: 20px; margin-bottom: 6px; color: #2ECC71; }
+.subtitle { font-size: 13px; color: #6b7fa0; margin-bottom: 24px; }
+.controls { display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; }
+button { background: #051F4E; border: 1px solid #1e2d40; color: #e4e8f0; font-family: 'Inter', sans-serif; font-size: 12px; padding: 7px 14px; border-radius: 6px; cursor: pointer; }
+button:hover { background: #0a2d6e; }
+button.primary { background: #2ECC71; color: #051F4E; font-weight: 700; border-color: #27ae60; }
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(384px, 1fr)); gap: 12px; }
+.thumb-wrap { position: relative; }
+.thumb-label { font-size: 10px; color: #4a6080; margin-top: 4px; font-family: monospace; }
+.dl-btn {
+  position: absolute; top: 8px; right: 8px; background: rgba(0,0,0,0.7); border: 1px solid rgba(255,255,255,0.2);
+  color: #fff; font-size: 10px; padding: 3px 8px; border-radius: 4px; cursor: pointer;
+  opacity: 0; transition: opacity 0.15s;
+}
+.thumb-wrap:hover .dl-btn { opacity: 1; }
+canvas { display: block; width: 100%; border-radius: 6px; border: 1px solid #1e2d40; }
+.section-head { grid-column: 1 / -1; font-family: 'Poppins', sans-serif; font-size: 14px; font-weight: 600; color: #4a6080; padding: 8px 0 4px; border-bottom: 1px solid #1e2d40; margin-top: 16px; }
+</style>
+</head>
+<body>
+<h1>Thumbnail Generator</h1>
+<p class="subtitle">Click a thumbnail to download · or "Download All" for a zip of all 42 PNGs</p>
+<div class="controls">
+  <button class="primary" id="dl-all">⬇ Download All (42 PNGs)</button>
+  <button id="regen">↺ Re-render All</button>
+</div>
+<div class="grid" id="grid"></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<script>
+// ── Video data (mirrors videos.json sections) ───────────────────
+const VIDEOS = [
+  // Walkthroughs
+  { id:'wt-lab-client',   title:'Lab Client Portal',           section:'Main Walkthroughs', type:'walkthrough', role:'lab-client',  duration:'2:43',   status:'published' },
+  { id:'wt-lab-company',  title:'Lab Company Dashboard',       section:'Main Walkthroughs', type:'walkthrough', role:'lab-company', duration:'~3 min', status:'planned' },
+  { id:'wt-pharmacy',     title:'Pharmacy Admin Dashboard',    section:'Main Walkthroughs', type:'walkthrough', role:'pharmacy',    duration:'~3 min', status:'planned' },
+  { id:'wt-driver-app',   title:'Driver Mobile App',           section:'Main Walkthroughs', type:'walkthrough', role:'driver',      duration:'~3 min', status:'planned' },
+  { id:'wt-platform',     title:'Complete Platform Overview',  section:'Main Walkthroughs', type:'walkthrough', role:'all',         duration:'~5 min', status:'planned' },
+  // Orders & Dispatch
+  { id:'feat-order-standard',  title:'Creating a Standard Order',         section:'Orders & Dispatch',       type:'feature', role:'pharmacy',    duration:'~30 sec', status:'planned' },
+  { id:'feat-order-stat',      title:'Creating a STAT / Urgent Order',    section:'Orders & Dispatch',       type:'feature', role:'lab-client',  duration:'~30 sec', status:'planned' },
+  { id:'feat-stat-dispatch',   title:'STAT Dispatch',                     section:'Orders & Dispatch',       type:'feature', role:'lab-company', duration:'~30 sec', status:'planned' },
+  { id:'feat-import-orders',   title:'Importing Orders',                  section:'Orders & Dispatch',       type:'feature', role:'pharmacy',    duration:'~45 sec', status:'planned' },
+  { id:'feat-label-templates', title:'Label Templates',                   section:'Orders & Dispatch',       type:'feature', role:'pharmacy',    duration:'~30 sec', status:'planned' },
+  { id:'feat-dispatch-route',  title:'Dispatching a Route',               section:'Orders & Dispatch',       type:'feature', role:'lab-company', duration:'~30 sec', status:'planned' },
+  { id:'feat-will-call',       title:'Will-Call Confirmation',            section:'Orders & Dispatch',       type:'feature', role:'lab-client',  duration:'~30 sec', status:'planned' },
+  // Live Tracking
+  { id:'feat-tracking-dispatcher',    title:'Live Tracking Map',          section:'Live Tracking',           type:'feature', role:'lab-company', duration:'~30 sec', status:'planned' },
+  { id:'feat-public-route-tracking',  title:'Public Route Tracking',      section:'Live Tracking',           type:'feature', role:'all',         duration:'~30 sec', status:'planned' },
+  { id:'feat-public-order-tracking',  title:'Public Order Tracking',      section:'Live Tracking',           type:'feature', role:'all',         duration:'~30 sec', status:'planned' },
+  // Route Builder
+  { id:'feat-route-builder-web',    title:'Route Builder (Web)',          section:'Route Builder',           type:'feature', role:'pharmacy',    duration:'~45 sec', status:'planned' },
+  { id:'feat-route-builder-driver', title:'Route Building (Driver App)',  section:'Route Builder',           type:'feature', role:'driver',      duration:'~45 sec', status:'planned' },
+  { id:'feat-scheduled-routes',     title:'Scheduled Routes',             section:'Route Builder',           type:'feature', role:'driver',      duration:'~30 sec', status:'planned' },
+  // Driver App
+  { id:'feat-driving-mode',     title:'Driving Mode & Navigation',        section:'Driver App Features',     type:'feature', role:'driver',      duration:'~45 sec', status:'planned' },
+  { id:'feat-completing-stop',  title:'Completing a Stop',                section:'Driver App Features',     type:'feature', role:'driver',      duration:'~30 sec', status:'planned' },
+  { id:'feat-pickup-verify',    title:'Pickup Verification',              section:'Driver App Features',     type:'feature', role:'driver',      duration:'~30 sec', status:'planned' },
+  { id:'feat-delivery-verify',  title:'Delivery Verification',            section:'Driver App Features',     type:'feature', role:'driver',      duration:'~30 sec', status:'planned' },
+  { id:'feat-barcode-scan',     title:'Barcode Scanning',                 section:'Driver App Features',     type:'feature', role:'driver',      duration:'~30 sec', status:'planned' },
+  { id:'feat-driver-stats',     title:'Driver Stats & Certifications',    section:'Driver App Features',     type:'feature', role:'driver',      duration:'~30 sec', status:'planned' },
+  // Scheduling
+  { id:'feat-driver-pay',         title:'Driver Pay Configuration',       section:'Scheduling & Coverage',   type:'feature', role:'lab-company', duration:'~30 sec', status:'planned' },
+  { id:'feat-coverage-calendar',  title:'Coverage Calendar',              section:'Scheduling & Coverage',   type:'feature', role:'lab-company', duration:'~45 sec', status:'planned' },
+  { id:'feat-coverage-gaps',      title:'Finding & Filling Coverage Gaps',section:'Scheduling & Coverage',   type:'feature', role:'lab-company', duration:'~30 sec', status:'planned' },
+  // Notifications
+  { id:'feat-alert-rules',      title:'Setting Up Alert Rules',           section:'Notifications & Alerts',  type:'feature', role:'lab-company', duration:'~45 sec', status:'planned' },
+  { id:'feat-notif-channels',   title:'Notification Channels',            section:'Notifications & Alerts',  type:'feature', role:'lab-company', duration:'~30 sec', status:'planned' },
+  { id:'feat-notif-log',        title:'Notification Log & History',       section:'Notifications & Alerts',  type:'feature', role:'lab-company', duration:'~30 sec', status:'planned' },
+  // Billing
+  { id:'feat-billing-dashboard', title:'Billing Dashboard Overview',      section:'Billing & Finance',       type:'feature', role:'lab-company', duration:'~45 sec', status:'planned' },
+  { id:'feat-invoice-mgmt',      title:'Invoice Management',              section:'Billing & Finance',       type:'feature', role:'lab-client',  duration:'~30 sec', status:'planned' },
+  { id:'feat-billing-recon',     title:'Billing Reconciliation',          section:'Billing & Finance',       type:'feature', role:'lab-company', duration:'~30 sec', status:'planned' },
+  { id:'feat-route-profit',      title:'Route Profitability',             section:'Billing & Finance',       type:'feature', role:'lab-company', duration:'~30 sec', status:'planned' },
+  { id:'feat-internal-costs',    title:'Tracking Internal Costs',         section:'Billing & Finance',       type:'feature', role:'lab-company', duration:'~30 sec', status:'planned' },
+  // Reports
+  { id:'feat-route-audit',    title:'Route Audit Trail',                  section:'Reports & Audit',         type:'feature', role:'lab-company', duration:'~45 sec', status:'planned' },
+  { id:'feat-gps-trail',      title:'GPS Trail Review',                   section:'Reports & Audit',         type:'feature', role:'lab-company', duration:'~30 sec', status:'planned' },
+  { id:'feat-dwell-analysis', title:'Stop Dwell & Wait-Time Analysis',    section:'Reports & Audit',         type:'feature', role:'lab-company', duration:'~30 sec', status:'planned' },
+  // Client & User
+  { id:'feat-client-mgmt',    title:'Client Management',                  section:'Client & User Mgmt',      type:'feature', role:'lab-company', duration:'~30 sec', status:'planned' },
+  { id:'feat-invite-client',  title:'Inviting a New Client User',         section:'Client & User Mgmt',      type:'feature', role:'lab-company', duration:'~30 sec', status:'planned' },
+  { id:'feat-user-org-mgmt',  title:'User & Organization Management',     section:'Client & User Mgmt',      type:'feature', role:'pharmacy',    duration:'~30 sec', status:'planned' },
+];
+
+// ── Design tokens ──────────────────────────────────────────────
+const ROLE_COLORS = {
+  'lab-client':  { accent: '#8B5CF6', label: 'Lab Client',   icon: '🧪' },
+  'lab-company': { accent: '#06B6D4', label: 'Lab Company',  icon: '🏢' },
+  'pharmacy':    { accent: '#F59E0B', label: 'Pharmacy Admin', icon: '💊' },
+  'driver':      { accent: '#10B981', label: 'Driver App',   icon: '🚗' },
+  'all':         { accent: '#4F8EF7', label: 'All Roles',    icon: '🌐' },
+};
+
+const W = 1280, H = 720;
+const canvases = {};
+
+// ── Draw one thumbnail on a canvas ───────────────────────────
+function drawThumb(canvas, video) {
+  const ctx = canvas.getContext('2d');
+  const rc = ROLE_COLORS[video.role] || ROLE_COLORS['all'];
+  const isWalkthrough = video.type === 'walkthrough';
+
+  // Background gradient
+  const bg = ctx.createLinearGradient(0, 0, W * 0.6, H);
+  bg.addColorStop(0, '#051F4E');
+  bg.addColorStop(1, '#031440');
+  ctx.fillStyle = bg;
+  ctx.fillRect(0, 0, W, H);
+
+  // Subtle diagonal accent band
+  ctx.save();
+  ctx.globalAlpha = 0.07;
+  const band = ctx.createLinearGradient(W * 0.55, 0, W, H);
+  band.addColorStop(0, rc.accent);
+  band.addColorStop(1, 'transparent');
+  ctx.fillStyle = band;
+  ctx.fillRect(0, 0, W, H);
+  ctx.restore();
+
+  // Right-side glow
+  ctx.save();
+  ctx.globalAlpha = 0.12;
+  const glow = ctx.createRadialGradient(W * 0.85, H * 0.4, 0, W * 0.85, H * 0.4, W * 0.4);
+  glow.addColorStop(0, rc.accent);
+  glow.addColorStop(1, 'transparent');
+  ctx.fillStyle = glow;
+  ctx.fillRect(0, 0, W, H);
+  ctx.restore();
+
+  // Grid dot pattern (subtle)
+  ctx.save();
+  ctx.globalAlpha = 0.03;
+  ctx.fillStyle = '#ffffff';
+  for (let x = 60; x < W; x += 40) {
+    for (let y = 60; y < H; y += 40) {
+      ctx.beginPath();
+      ctx.arc(x, y, 1.5, 0, Math.PI * 2);
+      ctx.fill();
+    }
+  }
+  ctx.restore();
+
+  // Top green stripe
+  ctx.fillStyle = '#2ECC71';
+  ctx.fillRect(0, 0, W, 5);
+
+  // Left accent bar
+  ctx.fillStyle = rc.accent;
+  ctx.globalAlpha = 0.9;
+  ctx.fillRect(0, 0, 6, H);
+  ctx.globalAlpha = 1;
+
+  // ── Role badge ──────────────────────────────────────────────
+  const badgeText = rc.label.toUpperCase();
+  ctx.font = '700 18px Poppins, sans-serif';
+  const bw = ctx.measureText(badgeText).width + 32;
+  const bx = W - bw - 40, by = 36;
+  // pill background
+  ctx.fillStyle = rc.accent + '22';
+  roundRect(ctx, bx, by, bw, 36, 18);
+  ctx.fill();
+  ctx.strokeStyle = rc.accent;
+  ctx.lineWidth = 1.5;
+  roundRect(ctx, bx, by, bw, 36, 18);
+  ctx.stroke();
+  ctx.fillStyle = rc.accent;
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.fillText(badgeText, bx + bw / 2, by + 18);
+
+  // ── DoitDelivery wordmark ───────────────────────────────────
+  ctx.textAlign = 'left';
+  ctx.textBaseline = 'alphabetic';
+  ctx.font = '700 26px Poppins, sans-serif';
+  ctx.fillStyle = '#ffffff';
+  ctx.fillText('Doit', 48, 72);
+  const dw = ctx.measureText('Doit').width;
+  ctx.fillStyle = '#2ECC71';
+  ctx.fillText('Delivery', 48 + dw, 72);
+
+  // ── Type label ──────────────────────────────────────────────
+  const typeText = isWalkthrough ? 'PLATFORM WALKTHROUGH' : 'FEATURE OVERVIEW';
+  ctx.font = '600 15px Inter, sans-serif';
+  ctx.fillStyle = '#2ECC71';
+  ctx.letterSpacing = '0.1em';
+  ctx.fillText(typeText, 48, H * 0.42);
+
+  // ── Green separator line ────────────────────────────────────
+  ctx.fillStyle = '#2ECC71';
+  ctx.globalAlpha = 0.6;
+  ctx.fillRect(48, H * 0.44, 60, 2);
+  ctx.globalAlpha = 1;
+
+  // ── Main title ──────────────────────────────────────────────
+  const titleLines = wrapText(ctx, video.title, W * 0.62 - 48, isWalkthrough ? 68 : 60);
+  const titleFont = isWalkthrough ? '800 68px Poppins, sans-serif' : '700 58px Poppins, sans-serif';
+  ctx.font = titleFont;
+  ctx.fillStyle = '#ffffff';
+  ctx.textBaseline = 'top';
+  const lineH = isWalkthrough ? 80 : 70;
+  const totalTitleH = titleLines.length * lineH;
+  const titleY = H * 0.47;
+  titleLines.forEach((line, i) => {
+    ctx.fillText(line, 48, titleY + i * lineH);
+  });
+
+  // ── Duration pill ───────────────────────────────────────────
+  const durationY = titleY + totalTitleH + 24;
+  ctx.font = '500 18px Inter, sans-serif';
+  ctx.fillStyle = 'rgba(255,255,255,0.5)';
+  ctx.textBaseline = 'alphabetic';
+  ctx.fillText('⏱ ' + video.duration, 48, durationY + 18);
+
+  // ── Large role icon (right side) ───────────────────────────
+  ctx.font = '160px serif';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.globalAlpha = isWalkthrough ? 0.18 : 0.14;
+  ctx.fillText(rc.icon, W * 0.82, H * 0.48);
+  ctx.globalAlpha = 1;
+
+  // ── Bottom bar ──────────────────────────────────────────────
+  const bottomGrad = ctx.createLinearGradient(0, H - 60, 0, H);
+  bottomGrad.addColorStop(0, 'transparent');
+  bottomGrad.addColorStop(1, 'rgba(0,0,0,0.5)');
+  ctx.fillStyle = bottomGrad;
+  ctx.fillRect(0, H - 60, W, 60);
+
+  // URL
+  ctx.font = '400 15px Inter, sans-serif';
+  ctx.fillStyle = 'rgba(255,255,255,0.3)';
+  ctx.textAlign = 'left';
+  ctx.textBaseline = 'alphabetic';
+  ctx.fillText('videos.doitdelivery.com', 48, H - 20);
+
+  // Published badge
+  if (video.status === 'published') {
+    ctx.font = '600 13px Inter, sans-serif';
+    ctx.fillStyle = '#2ECC71';
+    ctx.textAlign = 'right';
+    ctx.fillText('✓ PUBLISHED', W - 40, H - 20);
+  }
+}
+
+function roundRect(ctx, x, y, w, h, r) {
+  ctx.beginPath();
+  ctx.moveTo(x + r, y);
+  ctx.lineTo(x + w - r, y);
+  ctx.quadraticCurveTo(x + w, y, x + w, y + r);
+  ctx.lineTo(x + w, y + h - r);
+  ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
+  ctx.lineTo(x + r, y + h);
+  ctx.quadraticCurveTo(x, y + h, x, y + h - r);
+  ctx.lineTo(x, y + r);
+  ctx.quadraticCurveTo(x, y, x + r, y);
+  ctx.closePath();
+}
+
+function wrapText(ctx, text, maxW, fontSize) {
+  ctx.font = `700 ${fontSize}px Poppins, sans-serif`;
+  const words = text.split(' ');
+  const lines = [];
+  let line = '';
+  for (const w of words) {
+    const test = line ? line + ' ' + w : w;
+    if (ctx.measureText(test).width > maxW && line) {
+      lines.push(line);
+      line = w;
+    } else {
+      line = test;
+    }
+  }
+  if (line) lines.push(line);
+  return lines;
+}
+
+// ── Build grid ─────────────────────────────────────────────────
+function buildGrid() {
+  const grid = document.getElementById('grid');
+  grid.innerHTML = '';
+  let lastSection = '';
+
+  VIDEOS.forEach(video => {
+    if (video.section !== lastSection) {
+      lastSection = video.section;
+      const hd = document.createElement('div');
+      hd.className = 'section-head';
+      hd.textContent = video.section;
+      grid.appendChild(hd);
+    }
+
+    const wrap = document.createElement('div');
+    wrap.className = 'thumb-wrap';
+
+    const canvas = document.createElement('canvas');
+    canvas.width = W; canvas.height = H;
+    canvases[video.id] = canvas;
+
+    // Wait for fonts then draw
+    document.fonts.ready.then(() => drawThumb(canvas, video));
+
+    const dlBtn = document.createElement('button');
+    dlBtn.className = 'dl-btn';
+    dlBtn.textContent = '⬇ PNG';
+    dlBtn.addEventListener('click', () => downloadOne(video.id));
+
+    const label = document.createElement('div');
+    label.className = 'thumb-label';
+    label.textContent = video.id + '.png';
+
+    wrap.appendChild(canvas);
+    wrap.appendChild(dlBtn);
+    wrap.appendChild(label);
+    grid.appendChild(wrap);
+  });
+}
+
+function downloadOne(id) {
+  const canvas = canvases[id];
+  const a = document.createElement('a');
+  a.download = id + '.png';
+  a.href = canvas.toDataURL('image/png');
+  a.click();
+}
+
+document.getElementById('regen').addEventListener('click', () => {
+  document.fonts.ready.then(() => {
+    VIDEOS.forEach(v => drawThumb(canvases[v.id], v));
+  });
+});
+
+document.getElementById('dl-all').addEventListener('click', async () => {
+  const btn = document.getElementById('dl-all');
+  btn.textContent = 'Zipping…';
+  btn.disabled = true;
+  const zip = new JSZip();
+  VIDEOS.forEach(v => {
+    const dataUrl = canvases[v.id].toDataURL('image/png');
+    const base64 = dataUrl.split(',')[1];
+    zip.file(v.id + '.png', base64, { base64: true });
+  });
+  const blob = await zip.generateAsync({ type: 'blob' });
+  const a = document.createElement('a');
+  a.download = 'doitdelivery-thumbnails.zip';
+  a.href = URL.createObjectURL(blob);
+  a.click();
+  btn.textContent = '⬇ Download All (42 PNGs)';
+  btn.disabled = false;
+});
+
+buildGrid();
+</script>
+</body>
+</html>
