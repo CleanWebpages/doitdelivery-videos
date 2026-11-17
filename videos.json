@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "updated": "2026-10-19",
+  "updated": "2026-11-17",
   "note": "status field tracks whether the video file exists and is published. The Rails video_catalog_items table stores mutable team state (transcript, team_notes, done).",
   "sections": [
     {
@@ -95,6 +95,42 @@
           "type": "feature",
           "duration_label": "~30 sec",
           "duration_sec": 30,
+          "status": "planned",
+          "thumbnail_url": "",
+          "video_url": ""
+        },
+        {
+          "id": "feat-orders-list",
+          "title": "Orders List: Status, Filters & Actions",
+          "description": "Status counts that filter the list, the per-order actions menu, cancelling before pickup, and exporting what you see.",
+          "roles": ["lab-company", "pharmacy"],
+          "type": "feature",
+          "duration_label": "~1 min",
+          "duration_sec": 60,
+          "status": "planned",
+          "thumbnail_url": "",
+          "video_url": ""
+        },
+        {
+          "id": "feat-order-detail",
+          "title": "Order Detail & Status History",
+          "description": "The order page: progress bar, full event history, pickup and drop-off, assignment and charge, and correcting a status.",
+          "roles": ["lab-company", "pharmacy"],
+          "type": "feature",
+          "duration_label": "~1 min",
+          "duration_sec": 60,
+          "status": "planned",
+          "thumbnail_url": "",
+          "video_url": ""
+        },
+        {
+          "id": "feat-patient-data",
+          "title": "Patient Information on STAT Orders",
+          "description": "How patient names on STAT orders are protected: masked by default, revealed on click, logged, never exported; adding patients from the lab and the clinic portal.",
+          "roles": ["lab-company", "lab-client"],
+          "type": "feature",
+          "duration_label": "~1 min",
+          "duration_sec": 60,
           "status": "planned",
           "thumbnail_url": "",
           "video_url": ""
@@ -490,8 +526,8 @@
           "description": "Reviewing the full audit log for a completed route: stops, timestamps, exceptions.",
           "roles": ["lab-company", "pharmacy"],
           "type": "feature",
-          "duration_label": "~45 sec",
-          "duration_sec": 45,
+          "duration_label": "~1 min",
+          "duration_sec": 67,
           "status": "planned",
           "thumbnail_url": "",
           "video_url": ""
@@ -510,12 +546,12 @@
         },
         {
           "id": "feat-dwell-analysis",
-          "title": "Stop Dwell & Wait-Time Analysis",
-          "description": "Analyzing how long drivers spent at each stop and identifying outliers.",
+          "title": "Wait Review & Stop Settings",
+          "description": "Reviewing wait claims that GPS does not support (approve, adjust or reject) and the stop thresholds behind them.",
           "roles": ["lab-company", "pharmacy"],
           "type": "feature",
-          "duration_label": "~30 sec",
-          "duration_sec": 30,
+          "duration_label": "~1 min",
+          "duration_sec": 70,
           "status": "planned",
           "thumbnail_url": "",
           "video_url": ""
