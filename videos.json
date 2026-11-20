@@ -100,13 +100,25 @@
           "video_url": ""
         },
         {
+          "id": "feat-dispatch-dashboard",
+          "title": "Dispatch Dashboard",
+          "description": "Status tiles, the Orders Overview with multi-select and column filters, the right-click actions menu, dispatching several orders at once, Build Route, and the live map of drivers en route.",
+          "roles": ["pharmacy", "lab-company"],
+          "type": "feature",
+          "duration_label": "~2 min",
+          "duration_sec": 129,
+          "status": "planned",
+          "thumbnail_url": "",
+          "video_url": ""
+        },
+        {
           "id": "feat-orders-list",
           "title": "Orders List: Status, Filters & Actions",
           "description": "Status counts that filter the list, the per-order actions menu, cancelling before pickup, and exporting what you see.",
           "roles": ["lab-company", "pharmacy"],
           "type": "feature",
           "duration_label": "~1 min",
-          "duration_sec": 60,
+          "duration_sec": 75,
           "status": "planned",
           "thumbnail_url": "",
           "video_url": ""
