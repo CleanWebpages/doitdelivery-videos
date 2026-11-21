@@ -261,7 +261,7 @@
           "id": "feat-route-builder-web",
           "title": "Plan a Route",
           "description": "Plan a one-time route under Routes: pick orders on the map, set the stop order, choose the driver and create the route.",
-          "roles": ["pharmacy", "lab", "courier"],
+          "roles": ["lab-company", "pharmacy"],
           "type": "feature",
           "duration_label": "~45 sec",
           "duration_sec": 45,
