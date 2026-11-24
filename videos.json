@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "updated": "2026-11-17",
+  "updated": "2026-11-24",
   "note": "status field tracks whether the video file exists and is published. The Rails video_catalog_items table stores mutable team state (transcript, team_notes, done).",
   "sections": [
     {
@@ -64,6 +64,61 @@
           "type": "walkthrough",
           "duration_label": "~5 min",
           "duration_sec": 300,
+          "status": "planned",
+          "thumbnail_url": "",
+          "video_url": ""
+        }
+      ]
+    },
+    {
+      "id": "getting-started",
+      "title": "Getting Started: Setting Up a Business",
+      "description": "Set up a courier, pharmacy, lab or clinic from scratch, from the first invitation to the first order",
+      "videos": [
+        {
+          "id": "wt-setup-courier",
+          "title": "Setting Up a Courier Service",
+          "description": "Create the business, accept the admin invite, business settings, invite drivers, get connected by a client, client rates and the first order.",
+          "roles": ["all"],
+          "type": "walkthrough",
+          "duration_label": "2:03",
+          "duration_sec": 123,
+          "status": "planned",
+          "thumbnail_url": "",
+          "video_url": ""
+        },
+        {
+          "id": "wt-setup-pharmacy",
+          "title": "Setting Up a Pharmacy",
+          "description": "Create the pharmacy, set its address and default pickup, connect a courier, place the first STAT order and dispatch it.",
+          "roles": ["pharmacy"],
+          "type": "walkthrough",
+          "duration_label": "1:49",
+          "duration_sec": 109,
+          "status": "planned",
+          "thumbnail_url": "",
+          "video_url": ""
+        },
+        {
+          "id": "wt-setup-lab",
+          "title": "Setting Up a Lab",
+          "description": "Create the lab, set its drop-off, connect a courier, invite its first clinic and dispatch a first order.",
+          "roles": ["lab-company"],
+          "type": "walkthrough",
+          "duration_label": "1:51",
+          "duration_sec": 111,
+          "status": "planned",
+          "thumbnail_url": "",
+          "video_url": ""
+        },
+        {
+          "id": "wt-setup-lab-client",
+          "title": "Getting Started as a Lab Client",
+          "description": "A clinic accepts its lab's invitation, requests its first pickup, and the lab dispatches it.",
+          "roles": ["lab-client"],
+          "type": "walkthrough",
+          "duration_label": "1:11",
+          "duration_sec": 71,
           "status": "planned",
           "thumbnail_url": "",
           "video_url": ""
